@@ -3,12 +3,12 @@ import { SectionHeader } from "@/components/ui/section-header";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { PRODUCTS } from "@/lib/data/store-data";
+import { getFeaturedProducts } from "@/lib/db/data-access";
 import { formatCurrency } from "@/lib/utils";
 import { ArrowRight } from "lucide-react";
 
-export function FeaturedProductsSection() {
-  const featuredProducts = PRODUCTS.filter((p) => p.featured);
+export async function FeaturedProductsSection() {
+  const featuredProducts = await getFeaturedProducts();
 
   return (
     <section className="py-16 sm:py-24 border-b border-card-border">

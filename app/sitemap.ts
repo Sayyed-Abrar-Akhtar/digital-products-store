@@ -1,9 +1,13 @@
 import { MetadataRoute } from "next";
 import { SITE_CONFIG } from "@/lib/config/site";
-import { PRODUCTS, CATEGORIES, BLOG_POSTS } from "@/lib/data/store-data";
+import { getPublishedProducts, getPublishedCategories } from "@/lib/db/data-access";
+import { BLOG_POSTS } from "@/lib/data/store-data";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = SITE_CONFIG.url;
+
+  const products = await getPublishedProducts();
+  const categories = await getPublishedCategories();
 
   // Static routes
   const staticRoutes = [
@@ -27,7 +31,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   }));
 
   // Product detail pages
-  const productRoutes = PRODUCTS.map((product) => ({
+  const productRoutes = products.map((product) => ({
     url: `${baseUrl}/products/${product.slug}`,
     lastModified: new Date(product.updatedAt),
     changeFrequency: "weekly" as const,
@@ -35,7 +39,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   }));
 
   // Category detail pages
-  const categoryRoutes = CATEGORIES.map((category) => ({
+  const categoryRoutes = categories.map((category) => ({
     url: `${baseUrl}/categories/${category.slug}`,
     lastModified: new Date(),
     changeFrequency: "weekly" as const,

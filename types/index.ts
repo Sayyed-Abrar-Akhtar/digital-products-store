@@ -1,4 +1,4 @@
-export type ProductStatus = "coming_soon" | "in_development" | "available";
+export type ProductStatus = "coming_soon" | "in_development" | "available" | "published" | "draft" | "archived";
 
 export interface Product {
   id: string;
@@ -20,6 +20,8 @@ export interface Product {
   version: string;
   status: ProductStatus;
   featured: boolean;
+  isFree?: boolean;
+  documentationUrl?: string;
   createdAt: string;
   updatedAt: string;
   seoTitle?: string;
