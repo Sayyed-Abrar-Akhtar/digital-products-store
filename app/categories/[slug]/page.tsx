@@ -6,10 +6,10 @@ import { SectionHeader } from "@/components/ui/section-header";
 import { Card, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { CATEGORIES, PRODUCTS } from "@/lib/data/store-data";
+import { getCategoryBySlug, getProductsByCategory } from "@/lib/db/data-access";
 import { SITE_CONFIG } from "@/lib/config/site";
 import { formatCurrency } from "@/lib/utils";
-import { ArrowLeft, ChevronRight } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 
 interface CategoryDetailPageProps {
   params: Promise<{ slug: string }>;
@@ -17,7 +17,7 @@ interface CategoryDetailPageProps {
 
 export async function generateMetadata({ params }: CategoryDetailPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const category = CATEGORIES.find((c) => c.slug === slug);
+  const category = await getCategoryBySlug(slug);
   if (!category) return { title: "Category Not Found" };
 
   return {
@@ -31,13 +31,13 @@ export async function generateMetadata({ params }: CategoryDetailPageProps): Pro
 
 export default async function CategoryDetailPage({ params }: CategoryDetailPageProps) {
   const { slug } = await params;
-  const category = CATEGORIES.find((c) => c.slug === slug);
+  const category = await getCategoryBySlug(slug);
 
   if (!category) {
     notFound();
   }
 
-  const categoryProducts = PRODUCTS.filter((p) => p.categorySlug === category.slug);
+  const categoryProducts = await getProductsByCategory(category.slug);
 
   return (
     <Container className="py-12 sm:py-16">

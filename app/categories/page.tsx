@@ -4,7 +4,7 @@ import { Container } from "@/components/layout/container";
 import { SectionHeader } from "@/components/ui/section-header";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { CATEGORIES, PRODUCTS } from "@/lib/data/store-data";
+import { getPublishedCategories, getPublishedProducts } from "@/lib/db/data-access";
 import { SITE_CONFIG } from "@/lib/config/site";
 import { FolderKanban, ArrowRight } from "lucide-react";
 
@@ -16,7 +16,10 @@ export const metadata: Metadata = {
   },
 };
 
-export default function CategoriesPage() {
+export default async function CategoriesPage() {
+  const categories = await getPublishedCategories();
+  const products = await getPublishedProducts();
+
   return (
     <Container className="py-12 sm:py-16">
       <SectionHeader
@@ -26,8 +29,8 @@ export default function CategoriesPage() {
       />
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {CATEGORIES.map((category) => {
-          const productCount = PRODUCTS.filter((p) => p.categorySlug === category.slug).length;
+        {categories.map((category) => {
+          const productCount = products.filter((p) => p.categorySlug === category.slug).length;
 
           return (
             <Card key={category.id} className="flex flex-col justify-between p-6">

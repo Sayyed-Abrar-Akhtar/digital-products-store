@@ -1,11 +1,10 @@
 import { Metadata } from "next";
-import Link from "next/link";
 import { Container } from "@/components/layout/container";
 import { SectionHeader } from "@/components/ui/section-header";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { BUNDLES, PRODUCTS } from "@/lib/data/store-data";
+import { getPublishedBundles, getPublishedProducts } from "@/lib/db/data-access";
 import { SITE_CONFIG } from "@/lib/config/site";
 import { formatCurrency } from "@/lib/utils";
 import { Layers } from "lucide-react";
@@ -18,7 +17,10 @@ export const metadata: Metadata = {
   },
 };
 
-export default function BundlesPage() {
+export default async function BundlesPage() {
+  const bundles = await getPublishedBundles();
+  const products = await getPublishedProducts();
+
   return (
     <Container className="py-12 sm:py-16">
       <SectionHeader
@@ -28,8 +30,8 @@ export default function BundlesPage() {
       />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {BUNDLES.map((bundle) => {
-          const includedProducts = PRODUCTS.filter((p) =>
+        {bundles.map((bundle) => {
+          const includedProducts = products.filter((p) =>
             bundle.includedProductSlugs.includes(p.slug)
           );
 

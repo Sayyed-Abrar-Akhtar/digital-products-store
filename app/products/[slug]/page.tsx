@@ -4,11 +4,11 @@ import Link from "next/link";
 import { Container } from "@/components/layout/container";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardHeader, CardTitle, CardContent, CardFooter, CardDescription } from "@/components/ui/card";
-import { PRODUCTS } from "@/lib/data/store-data";
+import { Card } from "@/components/ui/card";
+import { getProductBySlug, getProductsByCategory } from "@/lib/db/data-access";
 import { SITE_CONFIG } from "@/lib/config/site";
 import { formatCurrency, formatDate } from "@/lib/utils";
-import { Check, Shield, FileCode, ArrowLeft, ChevronRight, Terminal, Layers } from "lucide-react";
+import { Check, Shield, ChevronRight, Terminal, Layers } from "lucide-react";
 
 interface ProductDetailPageProps {
   params: Promise<{ slug: string }>;
@@ -16,7 +16,7 @@ interface ProductDetailPageProps {
 
 export async function generateMetadata({ params }: ProductDetailPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const product = PRODUCTS.find((p) => p.slug === slug);
+  const product = await getProductBySlug(slug);
   if (!product) return { title: "Product Not Found" };
 
   return {
@@ -36,15 +36,16 @@ export async function generateMetadata({ params }: ProductDetailPageProps): Prom
 
 export default async function ProductDetailPage({ params }: ProductDetailPageProps) {
   const { slug } = await params;
-  const product = PRODUCTS.find((p) => p.slug === slug);
+  const product = await getProductBySlug(slug);
 
   if (!product) {
     notFound();
   }
 
-  const relatedProducts = PRODUCTS.filter(
-    (p) => p.id !== product.id && p.categorySlug === product.categorySlug
-  ).slice(0, 2);
+  const categoryProducts = await getProductsByCategory(product.categorySlug);
+  const relatedProducts = categoryProducts
+    .filter((p) => p.id !== product.id && p.slug !== product.slug)
+    .slice(0, 2);
 
   const breadcrumbJsonLd = {
     "@context": "https://schema.org",

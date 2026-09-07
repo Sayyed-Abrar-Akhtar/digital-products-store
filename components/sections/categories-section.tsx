@@ -1,10 +1,12 @@
 import Link from "next/link";
 import { SectionHeader } from "@/components/ui/section-header";
 import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { PLACEHOLDER_CATEGORIES } from "@/lib/data/placeholders";
+import { getPublishedCategories } from "@/lib/db/data-access";
 import { ArrowRight, FolderKanban } from "lucide-react";
 
-export function CategoriesSection() {
+export async function CategoriesSection() {
+  const categories = await getPublishedCategories();
+
   return (
     <section className="py-16 sm:py-24 border-b border-card-border bg-muted/20">
       <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -16,7 +18,7 @@ export function CategoriesSection() {
         />
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {PLACEHOLDER_CATEGORIES.map((category) => (
+          {categories.map((category) => (
             <Link key={category.id} href={`/categories/${category.slug}`} className="group">
               <Card className="h-full transition-all group-hover:border-accent/50 group-hover:shadow-md">
                 <CardHeader>
