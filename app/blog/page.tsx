@@ -2,16 +2,20 @@ import { Metadata } from "next";
 import Link from "next/link";
 import { Container } from "@/components/layout/container";
 import { SectionHeader } from "@/components/ui/section-header";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { PLACEHOLDER_BLOG_POSTS } from "@/lib/data/placeholders";
+import { BLOG_POSTS } from "@/lib/data/store-data";
+import { SITE_CONFIG } from "@/lib/config/site";
 import { formatDate } from "@/lib/utils";
-import { ArrowRight, BookOpen } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Engineering & Architecture Blog",
   description: "Articles, deep-dives, and technical insights on Next.js 16, web performance, and software architecture.",
+  alternates: {
+    canonical: `${SITE_CONFIG.url}/blog`,
+  },
 };
 
 export default function BlogPage() {
@@ -24,7 +28,7 @@ export default function BlogPage() {
       />
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        {PLACEHOLDER_BLOG_POSTS.map((post) => (
+        {BLOG_POSTS.map((post) => (
           <Card key={post.id} className="flex flex-col justify-between p-6">
             <div className="space-y-3">
               <div className="flex items-center justify-between">

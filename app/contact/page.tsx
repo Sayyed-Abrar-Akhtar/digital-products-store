@@ -5,11 +5,14 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { SITE_CONFIG } from "@/lib/config/site";
-import { Mail, MessageSquare } from "lucide-react";
+import { Mail } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Contact Us",
-  description: "Get in touch for custom support, architectural questions, or enterprise inquiries.",
+  title: "Contact & Support",
+  description: "Get in touch for custom architecture support or product inquiries.",
+  alternates: {
+    canonical: `${SITE_CONFIG.url}/contact`,
+  },
 };
 
 export default function ContactPage() {
@@ -17,7 +20,7 @@ export default function ContactPage() {
     <Container className="py-12 sm:py-16 max-w-4xl">
       <SectionHeader
         title="Contact & Support"
-        subtitle="Have questions about our digital products or custom architecture services? Send us a message."
+        subtitle="Have questions about our upcoming digital products or custom architecture services? Get in touch."
         badge="Get in Touch"
       />
 
@@ -63,7 +66,7 @@ export default function ContactPage() {
             </div>
 
             <Button type="submit" className="w-full sm:w-auto">
-              Send Message [Placeholder]
+              Send Message
             </Button>
           </form>
         </Card>

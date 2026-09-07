@@ -1,26 +1,26 @@
 import { SectionHeader } from "@/components/ui/section-header";
-import { ShieldCheck, Zap, Code, RefreshCw } from "lucide-react";
+import { ShieldCheck, Zap, Code, Layout } from "lucide-react";
 
 const FEATURES = [
   {
     icon: Zap,
-    title: "Ultra-Fast Performance",
-    description: "Built strictly on Next.js 16 Server Components for instant load times and optimal Core Web Vitals.",
+    title: "Server-First Performance",
+    description: "Architected with Next.js 16 Server Components to minimize client JavaScript overhead and optimize page delivery.",
   },
   {
     icon: Code,
-    title: "Clean TypeScript Codebase",
-    description: "Well-structured, strongly typed code without unnecessary dependencies or messy abstractions.",
+    title: "Strict TypeScript Standards",
+    description: "Strongly typed codebase without unnecessary dependencies or messy runtime abstractions.",
   },
   {
     icon: ShieldCheck,
-    title: "Production Ready Architecture",
-    description: "Built with security, accessibility, and WCAG compliance in mind from day one.",
+    title: "Accessible & Responsive",
+    description: "Crafted with semantic HTML, fluid layouts, clear focus rings, and dark theme support.",
   },
   {
-    icon: RefreshCw,
-    title: "Continuous Updates",
-    description: "Regular updates ensuring compatibility with the latest Next.js releases and web standards.",
+    icon: Layout,
+    title: "Clean Modular Structure",
+    description: "Decoupled data layer and UI presentation ready for future database and authentication integration.",
   },
 ];
 
@@ -29,9 +29,9 @@ export function WhyChooseUsSection() {
     <section className="py-16 sm:py-24 border-b border-card-border bg-muted/20">
       <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <SectionHeader
-          title="Engineered for Production Standards"
-          subtitle="We focus on developer ergonomics, accessibility, and high performance."
-          badge="Why Choose Us"
+          title="Engineered to Modern Production Standards"
+          subtitle="Focused on clean code ergonomics, accessibility, and lightweight architecture."
+          badge="Engineering Standards"
           align="center"
         />
 

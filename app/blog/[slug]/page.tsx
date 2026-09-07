@@ -3,9 +3,10 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { Container } from "@/components/layout/container";
 import { Badge } from "@/components/ui/badge";
-import { PLACEHOLDER_BLOG_POSTS } from "@/lib/data/placeholders";
+import { BLOG_POSTS } from "@/lib/data/store-data";
+import { SITE_CONFIG } from "@/lib/config/site";
 import { formatDate } from "@/lib/utils";
-import { ArrowLeft, Calendar, User, Clock } from "lucide-react";
+import { ArrowLeft, Calendar, User, Clock, ChevronRight } from "lucide-react";
 
 interface BlogPostPageProps {
   params: Promise<{ slug: string }>;
@@ -13,32 +14,70 @@ interface BlogPostPageProps {
 
 export async function generateMetadata({ params }: BlogPostPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const post = PLACEHOLDER_BLOG_POSTS.find((p) => p.slug === slug);
+  const post = BLOG_POSTS.find((p) => p.slug === slug);
   if (!post) return { title: "Post Not Found" };
 
   return {
     title: post.title,
     description: post.excerpt,
+    alternates: {
+      canonical: `${SITE_CONFIG.url}/blog/${post.slug}`,
+    },
+    openGraph: {
+      title: post.title,
+      description: post.excerpt,
+      type: "article",
+      publishedTime: post.publishedAt,
+      authors: [post.author.name],
+    },
   };
 }
 
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
   const { slug } = await params;
-  const post = PLACEHOLDER_BLOG_POSTS.find((p) => p.slug === slug);
+  const post = BLOG_POSTS.find((p) => p.slug === slug);
 
   if (!post) {
     notFound();
   }
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": post.title,
+    "description": post.excerpt,
+    "datePublished": post.publishedAt,
+    "author": {
+      "@type": "Person",
+      "name": post.author.name,
+      "jobTitle": post.author.role,
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": SITE_CONFIG.name,
+      "url": SITE_CONFIG.url,
+    },
+  };
+
   return (
     <Container className="py-12 sm:py-16 max-w-4xl">
-      <Link
-        href="/blog"
-        className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-8 transition-colors"
-      >
-        <ArrowLeft className="w-4 h-4" />
-        <span>Back to Blog</span>
-      </Link>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+
+      {/* Breadcrumbs Navigation */}
+      <nav aria-label="Breadcrumb" className="mb-8 flex items-center gap-2 text-xs font-mono text-muted-foreground">
+        <Link href="/" className="hover:text-foreground transition-colors">
+          Home
+        </Link>
+        <ChevronRight className="w-3.5 h-3.5" />
+        <Link href="/blog" className="hover:text-foreground transition-colors">
+          Blog
+        </Link>
+        <ChevronRight className="w-3.5 h-3.5" />
+        <span className="text-foreground truncate max-w-[200px] sm:max-w-none">{post.title}</span>
+      </nav>
 
       <article className="space-y-8">
         <header className="space-y-4 border-b border-card-border pb-8">

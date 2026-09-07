@@ -1,19 +1,29 @@
+export type ProductStatus = "coming_soon" | "in_development" | "available";
+
 export interface Product {
   id: string;
   slug: string;
   name: string;
-  tagline: string;
+  shortDescription: string;
   description: string;
-  price: number;
-  originalPrice?: number;
-  isFree?: boolean;
+  category: string;
   categorySlug: string;
   categoryName: string;
   tags: string[];
+  price: number;
+  compareAtPrice?: number;
+  currency: string;
+  images: string[];
+  demoUrl?: string;
   features: string[];
-  fileFormat: string;
+  requirements: string[];
   version: string;
+  status: ProductStatus;
+  featured: boolean;
+  createdAt: string;
   updatedAt: string;
+  seoTitle?: string;
+  seoDescription?: string;
   badge?: string;
 }
 
@@ -22,7 +32,6 @@ export interface Category {
   slug: string;
   name: string;
   description: string;
-  productCountPlaceholder: number;
   iconName?: string;
 }
 
@@ -35,6 +44,7 @@ export interface Bundle {
   originalValue: number;
   includedProductSlugs: string[];
   badge?: string;
+  status: ProductStatus;
 }
 
 export interface FreeResource {
@@ -43,7 +53,6 @@ export interface FreeResource {
   title: string;
   description: string;
   format: string;
-  downloadUrlPlaceholder: string;
   category: string;
   createdAt: string;
 }
