@@ -10,21 +10,25 @@ import {
 } from "../lib/db/data-access";
 
 describe("Catalog Data Access Layer Tests", () => {
-  test("getPublishedProducts returns list of products without drafts", async () => {
+  test("getPublishedProducts returns list of products without drafts or archived", async () => {
     const products = await getPublishedProducts();
     assert.ok(Array.isArray(products));
-    assert.ok(products.length > 0);
+    assert.ok(products.length >= 10);
 
-    for (const p of products) {
-      assert.notEqual(p.status, "draft");
-      assert.notEqual(p.status, "archived");
-      assert.ok(p.id);
-      assert.ok(p.name);
-      assert.ok(p.slug);
-    }
+    const statuses = products.map((p) => p.status);
+    assert.ok(!statuses.includes("draft"));
+    assert.ok(!statuses.includes("archived"));
+
+    // Verify free products exist
+    const freeProducts = products.filter((p) => p.isFree || p.price === 0);
+    assert.ok(freeProducts.length >= 3);
+
+    // Verify coming_soon product exists in public products
+    const comingSoon = products.filter((p) => p.status === "coming_soon");
+    assert.ok(comingSoon.length >= 1);
   });
 
-  test("getProductBySlug retrieves valid product and handles missing/draft gracefully", async () => {
+  test("getProductBySlug retrieves valid product and enforces public status filter", async () => {
     const products = await getPublishedProducts();
     const targetSlug = products[0].slug;
 
@@ -32,15 +36,23 @@ describe("Catalog Data Access Layer Tests", () => {
     assert.ok(found);
     assert.equal(found.slug, targetSlug);
 
-    // Missing product should return null
+    // Draft product slug must return null
+    const draftFound = await getProductBySlug("internal-analytics-micro-engine");
+    assert.equal(draftFound, null);
+
+    // Archived product slug must return null
+    const archivedFound = await getProductBySlug("legacy-nextjs-pages-router-template");
+    assert.equal(archivedFound, null);
+
+    // Non-existent slug must return null
     const missing = await getProductBySlug("non-existent-slug-12345");
     assert.equal(missing, null);
   });
 
-  test("getPublishedCategories returns all valid categories", async () => {
+  test("getPublishedCategories returns 6 valid categories", async () => {
     const categories = await getPublishedCategories();
     assert.ok(Array.isArray(categories));
-    assert.ok(categories.length > 0);
+    assert.equal(categories.length, 6);
 
     for (const c of categories) {
       assert.ok(c.id);
@@ -72,6 +84,7 @@ describe("Catalog Data Access Layer Tests", () => {
   test("getFeaturedProducts returns only featured non-draft products", async () => {
     const featured = await getFeaturedProducts();
     assert.ok(Array.isArray(featured));
+    assert.ok(featured.length >= 3);
     for (const p of featured) {
       assert.equal(p.featured, true);
       assert.notEqual(p.status, "draft");
