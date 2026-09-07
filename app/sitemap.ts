@@ -1,10 +1,6 @@
 import { MetadataRoute } from "next";
 import { SITE_CONFIG } from "@/lib/config/site";
-import {
-  PLACEHOLDER_PRODUCTS,
-  PLACEHOLDER_CATEGORIES,
-  PLACEHOLDER_BLOG_POSTS,
-} from "@/lib/data/placeholders";
+import { PRODUCTS, CATEGORIES, BLOG_POSTS } from "@/lib/data/store-data";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = SITE_CONFIG.url;
@@ -20,6 +16,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/about",
     "/faq",
     "/contact",
+    "/privacy",
+    "/terms",
+    "/refunds",
   ].map((route) => ({
     url: `${baseUrl}${route}`,
     lastModified: new Date(),
@@ -28,7 +27,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   }));
 
   // Product detail pages
-  const productRoutes = PLACEHOLDER_PRODUCTS.map((product) => ({
+  const productRoutes = PRODUCTS.map((product) => ({
     url: `${baseUrl}/products/${product.slug}`,
     lastModified: new Date(product.updatedAt),
     changeFrequency: "weekly" as const,
@@ -36,7 +35,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   }));
 
   // Category detail pages
-  const categoryRoutes = PLACEHOLDER_CATEGORIES.map((category) => ({
+  const categoryRoutes = CATEGORIES.map((category) => ({
     url: `${baseUrl}/categories/${category.slug}`,
     lastModified: new Date(),
     changeFrequency: "weekly" as const,
@@ -44,7 +43,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   }));
 
   // Blog post pages
-  const blogRoutes = PLACEHOLDER_BLOG_POSTS.map((post) => ({
+  const blogRoutes = BLOG_POSTS.map((post) => ({
     url: `${baseUrl}/blog/${post.slug}`,
     lastModified: new Date(post.publishedAt),
     changeFrequency: "monthly" as const,

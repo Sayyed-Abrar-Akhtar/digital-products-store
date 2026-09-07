@@ -5,7 +5,10 @@ import { SITE_CONFIG } from "@/lib/config/site";
 
 export const metadata: Metadata = {
   title: "About Us",
-  description: `Learn about ${SITE_CONFIG.name} and our mission to provide production-grade digital tools.`,
+  description: `Learn about ${SITE_CONFIG.name} and our mission to provide engineered digital tools.`,
+  alternates: {
+    canonical: `${SITE_CONFIG.url}/about`,
+  },
 };
 
 export default function AboutPage() {

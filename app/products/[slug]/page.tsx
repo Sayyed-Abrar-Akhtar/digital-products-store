@@ -4,10 +4,11 @@ import Link from "next/link";
 import { Container } from "@/components/layout/container";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { PLACEHOLDER_PRODUCTS } from "@/lib/data/placeholders";
+import { Card, CardHeader, CardTitle, CardContent, CardFooter, CardDescription } from "@/components/ui/card";
+import { PRODUCTS } from "@/lib/data/store-data";
+import { SITE_CONFIG } from "@/lib/config/site";
 import { formatCurrency, formatDate } from "@/lib/utils";
-import { Check, Download, Shield, FileCode, ArrowLeft } from "lucide-react";
+import { Check, Shield, FileCode, ArrowLeft, ChevronRight, Terminal, Layers } from "lucide-react";
 
 interface ProductDetailPageProps {
   params: Promise<{ slug: string }>;
@@ -15,32 +16,80 @@ interface ProductDetailPageProps {
 
 export async function generateMetadata({ params }: ProductDetailPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const product = PLACEHOLDER_PRODUCTS.find((p) => p.slug === slug);
+  const product = PRODUCTS.find((p) => p.slug === slug);
   if (!product) return { title: "Product Not Found" };
 
   return {
-    title: product.name,
-    description: product.tagline,
+    title: product.seoTitle || product.name,
+    description: product.seoDescription || product.shortDescription,
+    alternates: {
+      canonical: `${SITE_CONFIG.url}/products/${product.slug}`,
+    },
+    openGraph: {
+      title: product.name,
+      description: product.shortDescription,
+      url: `${SITE_CONFIG.url}/products/${product.slug}`,
+      type: "website",
+    },
   };
 }
 
 export default async function ProductDetailPage({ params }: ProductDetailPageProps) {
   const { slug } = await params;
-  const product = PLACEHOLDER_PRODUCTS.find((p) => p.slug === slug);
+  const product = PRODUCTS.find((p) => p.slug === slug);
 
   if (!product) {
     notFound();
   }
 
+  const relatedProducts = PRODUCTS.filter(
+    (p) => p.id !== product.id && p.categorySlug === product.categorySlug
+  ).slice(0, 2);
+
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": SITE_CONFIG.url,
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Products",
+        "item": `${SITE_CONFIG.url}/products`,
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": product.name,
+        "item": `${SITE_CONFIG.url}/products/${product.slug}`,
+      },
+    ],
+  };
+
   return (
     <Container className="py-12 sm:py-16">
-      <Link
-        href="/products"
-        className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-8 transition-colors"
-      >
-        <ArrowLeft className="w-4 h-4" />
-        <span>Back to All Products</span>
-      </Link>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
+
+      {/* Breadcrumbs Navigation */}
+      <nav aria-label="Breadcrumb" className="mb-8 flex items-center gap-2 text-xs font-mono text-muted-foreground">
+        <Link href="/" className="hover:text-foreground transition-colors">
+          Home
+        </Link>
+        <ChevronRight className="w-3.5 h-3.5" />
+        <Link href="/products" className="hover:text-foreground transition-colors">
+          Products
+        </Link>
+        <ChevronRight className="w-3.5 h-3.5" />
+        <span className="text-foreground truncate max-w-[200px] sm:max-w-none">{product.name}</span>
+      </nav>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
         <div className="lg:col-span-2 space-y-8">
@@ -53,17 +102,17 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
               {product.name}
             </h1>
             <p className="text-lg text-muted-foreground leading-relaxed">
-              {product.tagline}
+              {product.shortDescription}
             </p>
           </div>
 
           <div className="prose prose-slate dark:prose-invert max-w-none border-t border-card-border pt-6">
-            <h3 className="text-xl font-bold mb-3">Product Overview</h3>
+            <h2 className="text-xl font-bold mb-3 text-foreground">Product Overview</h2>
             <p className="text-muted-foreground leading-relaxed">{product.description}</p>
           </div>
 
           <div className="border-t border-card-border pt-6">
-            <h3 className="text-xl font-bold mb-4">Key Features & Architecture</h3>
+            <h2 className="text-xl font-bold mb-4 text-foreground">Key Features & Architecture</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {product.features.map((feature, idx) => (
                 <div key={idx} className="flex items-start gap-3 p-3 rounded-lg bg-card border border-card-border">
@@ -73,40 +122,82 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
               ))}
             </div>
           </div>
+
+          {product.requirements && product.requirements.length > 0 && (
+            <div className="border-t border-card-border pt-6">
+              <h2 className="text-xl font-bold mb-4 text-foreground flex items-center gap-2">
+                <Terminal className="w-5 h-5 text-accent" />
+                <span>Technical Requirements</span>
+              </h2>
+              <ul className="list-disc pl-5 space-y-1.5 text-sm text-muted-foreground">
+                {product.requirements.map((req, idx) => (
+                  <li key={idx}>{req}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {/* Related Products */}
+          {relatedProducts.length > 0 && (
+            <div className="border-t border-card-border pt-8 space-y-4">
+              <h2 className="text-xl font-bold text-foreground flex items-center gap-2">
+                <Layers className="w-5 h-5 text-accent" />
+                <span>Related Products</span>
+              </h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {relatedProducts.map((rel) => (
+                  <Card key={rel.id} className="p-4 flex flex-col justify-between">
+                    <div>
+                      <h3 className="font-bold text-base text-foreground mb-1">{rel.name}</h3>
+                      <p className="text-xs text-muted-foreground line-clamp-2">{rel.shortDescription}</p>
+                    </div>
+                    <div className="mt-4 pt-3 border-t border-card-border flex items-center justify-between">
+                      <span className="font-mono text-xs font-bold">{formatCurrency(rel.price, rel.currency)}</span>
+                      <Button size="sm" variant="ghost" asChild>
+                        <Link href={`/products/${rel.slug}`}>View</Link>
+                      </Button>
+                    </div>
+                  </Card>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
 
         <div className="lg:col-span-1">
           <Card className="sticky top-24 p-6 space-y-6">
             <div className="space-y-1">
-              <span className="text-xs font-mono text-muted-foreground uppercase">Price</span>
+              <span className="text-xs font-mono text-muted-foreground uppercase">Target Price</span>
               <div className="flex items-baseline gap-2">
                 <span className="text-3xl font-extrabold font-mono text-foreground">
-                  {formatCurrency(product.price)}
+                  {formatCurrency(product.price, product.currency)}
                 </span>
-                {product.originalPrice && (
+                {product.compareAtPrice && (
                   <span className="text-sm text-muted-foreground line-through font-mono">
-                    {formatCurrency(product.originalPrice)}
+                    {formatCurrency(product.compareAtPrice, product.currency)}
                   </span>
                 )}
               </div>
             </div>
 
             <Button size="lg" className="w-full gap-2" disabled>
-              Purchase Access [Placeholder]
+              In Development — Registration Opening Soon
             </Button>
-            <p className="text-xs text-center text-muted-foreground">
-              Payment processing foundation mode. No actual charges.
+            <p className="text-xs text-center text-muted-foreground leading-normal">
+              This digital product is currently in active development. Checkout will activate upon version 1.0 release.
             </p>
 
             <div className="border-t border-card-border pt-4 space-y-3 text-xs text-muted-foreground">
               <div className="flex items-center justify-between">
                 <span className="flex items-center gap-1.5">
-                  <FileCode className="w-4 h-4" /> Format:
+                  <Shield className="w-4 h-4 text-accent" /> Status:
                 </span>
-                <span className="font-mono text-foreground">{product.fileFormat}</span>
+                <span className="font-mono font-semibold text-foreground capitalize">
+                  {product.status.replace("_", " ")}
+                </span>
               </div>
               <div className="flex items-center justify-between">
-                <span>Version:</span>
+                <span>Version Target:</span>
                 <span className="font-mono text-foreground">{product.version}</span>
               </div>
               <div className="flex items-center justify-between">

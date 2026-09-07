@@ -1,16 +1,19 @@
 import { Metadata } from "next";
-import Link from "next/link";
 import { Container } from "@/components/layout/container";
 import { SectionHeader } from "@/components/ui/section-header";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { PLACEHOLDER_FREE_RESOURCES } from "@/lib/data/placeholders";
-import { Download, FileText, Gift } from "lucide-react";
+import { FREE_RESOURCES } from "@/lib/data/store-data";
+import { SITE_CONFIG } from "@/lib/config/site";
+import { Download } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Free Resources",
+  title: "Free Resources & Cheat Sheets",
   description: "Download free architectural cheat sheets, accessibility checklists, and developer guides.",
+  alternates: {
+    canonical: `${SITE_CONFIG.url}/free`,
+  },
 };
 
 export default function FreeResourcesPage() {
@@ -23,7 +26,7 @@ export default function FreeResourcesPage() {
       />
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {PLACEHOLDER_FREE_RESOURCES.map((resource) => (
+        {FREE_RESOURCES.map((resource) => (
           <Card key={resource.id} className="p-6 flex flex-col justify-between space-y-4">
             <div className="space-y-3">
               <div className="flex items-center justify-between">
@@ -35,10 +38,10 @@ export default function FreeResourcesPage() {
             </div>
 
             <div className="pt-4 border-t border-card-border flex items-center justify-between">
-              <span className="text-xs font-mono text-accent">100% Free Asset</span>
-              <Button size="sm" variant="outline" className="gap-2">
+              <span className="text-xs font-mono text-accent">100% Free Resource</span>
+              <Button size="sm" variant="outline" className="gap-2" disabled>
                 <Download className="w-4 h-4" />
-                <span>Download Asset [Placeholder]</span>
+                <span>Download Assets (Coming Soon)</span>
               </Button>
             </div>
           </Card>

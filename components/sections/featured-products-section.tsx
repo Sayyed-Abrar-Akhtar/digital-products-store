@@ -3,18 +3,20 @@ import { SectionHeader } from "@/components/ui/section-header";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { PLACEHOLDER_PRODUCTS } from "@/lib/data/placeholders";
+import { PRODUCTS } from "@/lib/data/store-data";
 import { formatCurrency } from "@/lib/utils";
-import { ArrowRight, Tag } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
 export function FeaturedProductsSection() {
+  const featuredProducts = PRODUCTS.filter((p) => p.featured);
+
   return (
     <section className="py-16 sm:py-24 border-b border-card-border">
       <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-10 gap-4">
           <SectionHeader
-            title="Featured Digital Products"
-            subtitle="Carefully engineered templates, tools, and guides ready for production deployment."
+            title="Upcoming Products & Architecture Kits"
+            subtitle="Carefully engineered templates, tools, and guides currently in development."
             badge="Store Highlights"
             className="mb-0"
           />
@@ -27,7 +29,7 @@ export function FeaturedProductsSection() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {PLACEHOLDER_PRODUCTS.slice(0, 3).map((product) => (
+          {featuredProducts.map((product) => (
             <Card key={product.id} className="flex flex-col h-full">
               <CardHeader>
                 <div className="flex items-center justify-between gap-2 mb-2">
@@ -35,7 +37,7 @@ export function FeaturedProductsSection() {
                   {product.badge && <Badge variant="accent">{product.badge}</Badge>}
                 </div>
                 <CardTitle className="line-clamp-1">{product.name}</CardTitle>
-                <CardDescription className="line-clamp-2">{product.tagline}</CardDescription>
+                <CardDescription className="line-clamp-2">{product.shortDescription}</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4 flex-1">
                 <div className="space-y-1.5 text-xs text-muted-foreground">
@@ -52,9 +54,9 @@ export function FeaturedProductsSection() {
                   <span className="text-xl font-bold font-mono">
                     {formatCurrency(product.price)}
                   </span>
-                  {product.originalPrice && (
+                  {product.compareAtPrice && (
                     <span className="text-xs text-muted-foreground line-through font-mono">
-                      {formatCurrency(product.originalPrice)}
+                      {formatCurrency(product.compareAtPrice)}
                     </span>
                   )}
                 </div>

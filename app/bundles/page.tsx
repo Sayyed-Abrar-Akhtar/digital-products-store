@@ -2,16 +2,20 @@ import { Metadata } from "next";
 import Link from "next/link";
 import { Container } from "@/components/layout/container";
 import { SectionHeader } from "@/components/ui/section-header";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { PLACEHOLDER_BUNDLES, PLACEHOLDER_PRODUCTS } from "@/lib/data/placeholders";
+import { BUNDLES, PRODUCTS } from "@/lib/data/store-data";
+import { SITE_CONFIG } from "@/lib/config/site";
 import { formatCurrency } from "@/lib/utils";
-import { Layers, Check } from "lucide-react";
+import { Layers } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Product Bundles",
-  description: "Curated suites of starter kits, design tokens, and technical playbooks at discounted pricing.",
+  title: "Product Bundles & Architecture Suites",
+  description: "Curated suites combining starter kits, design tokens, and technical playbooks.",
+  alternates: {
+    canonical: `${SITE_CONFIG.url}/bundles`,
+  },
 };
 
 export default function BundlesPage() {
@@ -24,8 +28,8 @@ export default function BundlesPage() {
       />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {PLACEHOLDER_BUNDLES.map((bundle) => {
-          const includedProducts = PLACEHOLDER_PRODUCTS.filter((p) =>
+        {BUNDLES.map((bundle) => {
+          const includedProducts = PRODUCTS.filter((p) =>
             bundle.includedProductSlugs.includes(p.slug)
           );
 
@@ -49,7 +53,7 @@ export default function BundlesPage() {
                     {includedProducts.map((prod) => (
                       <div key={prod.id} className="flex items-center justify-between text-sm p-2 rounded bg-muted/40">
                         <span className="font-medium">{prod.name}</span>
-                        <span className="font-mono text-xs text-muted-foreground">{formatCurrency(prod.price)}</span>
+                        <span className="font-mono text-xs text-muted-foreground">{formatCurrency(prod.price, prod.currency)}</span>
                       </div>
                     ))}
                   </div>
@@ -66,7 +70,7 @@ export default function BundlesPage() {
                     </span>
                   </div>
                 </div>
-                <Button disabled className="w-full sm:w-auto">Get Bundle [Placeholder]</Button>
+                <Button disabled className="w-full sm:w-auto">Bundle Suite Coming Soon</Button>
               </div>
             </Card>
           );
