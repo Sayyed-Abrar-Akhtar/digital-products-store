@@ -20,11 +20,19 @@ export async function generateMetadata({ params }: CategoryDetailPageProps): Pro
   const category = await getCategoryBySlug(slug);
   if (!category) return { title: "Category Not Found" };
 
+  const canonicalUrl = `${SITE_CONFIG.url}/categories/${category.slug}`;
+
   return {
-    title: `${category.name} Products`,
+    title: `${category.name} Products | ${SITE_CONFIG.name}`,
     description: category.description,
     alternates: {
-      canonical: `${SITE_CONFIG.url}/categories/${category.slug}`,
+      canonical: canonicalUrl,
+    },
+    openGraph: {
+      title: `${category.name} Products`,
+      description: category.description,
+      url: canonicalUrl,
+      type: "website",
     },
   };
 }
@@ -39,8 +47,40 @@ export default async function CategoryDetailPage({ params }: CategoryDetailPageP
 
   const categoryProducts = await getProductsByCategory(category.slug);
 
+  const categoryCanonicalUrl = `${SITE_CONFIG.url}/categories/${category.slug}`;
+
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": SITE_CONFIG.url,
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Categories",
+        "item": `${SITE_CONFIG.url}/categories`,
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": category.name,
+        "item": categoryCanonicalUrl,
+      },
+    ],
+  };
+
   return (
     <Container className="py-12 sm:py-16">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
+
       {/* Breadcrumbs Navigation */}
       <nav aria-label="Breadcrumb" className="mb-8 flex items-center gap-2 text-xs font-mono text-muted-foreground">
         <Link href="/" className="hover:text-foreground transition-colors">

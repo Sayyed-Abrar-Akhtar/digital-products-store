@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { BLOG_POSTS } from "@/lib/data/store-data";
 import { SITE_CONFIG } from "@/lib/config/site";
 import { formatDate } from "@/lib/utils";
-import { ArrowLeft, Calendar, User, Clock, ChevronRight } from "lucide-react";
+import { Calendar, User, Clock, ChevronRight } from "lucide-react";
 
 interface BlogPostPageProps {
   params: Promise<{ slug: string }>;
@@ -17,15 +17,18 @@ export async function generateMetadata({ params }: BlogPostPageProps): Promise<M
   const post = BLOG_POSTS.find((p) => p.slug === slug);
   if (!post) return { title: "Post Not Found" };
 
+  const canonicalUrl = `${SITE_CONFIG.url}/blog/${post.slug}`;
+
   return {
-    title: post.title,
+    title: `${post.title} | ${SITE_CONFIG.name}`,
     description: post.excerpt,
     alternates: {
-      canonical: `${SITE_CONFIG.url}/blog/${post.slug}`,
+      canonical: canonicalUrl,
     },
     openGraph: {
       title: post.title,
       description: post.excerpt,
+      url: canonicalUrl,
       type: "article",
       publishedTime: post.publishedAt,
       authors: [post.author.name],
@@ -41,12 +44,18 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     notFound();
   }
 
+  const postCanonicalUrl = `${SITE_CONFIG.url}/blog/${post.slug}`;
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
     "headline": post.title,
     "description": post.excerpt,
     "datePublished": post.publishedAt,
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": postCanonicalUrl,
+    },
     "author": {
       "@type": "Person",
       "name": post.author.name,
@@ -56,7 +65,33 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
       "@type": "Organization",
       "name": SITE_CONFIG.name,
       "url": SITE_CONFIG.url,
+      "logo": `${SITE_CONFIG.url}/og-image.png`,
     },
+  };
+
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": SITE_CONFIG.url,
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Blog",
+        "item": `${SITE_CONFIG.url}/blog`,
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": post.title,
+        "item": postCanonicalUrl,
+      },
+    ],
   };
 
   return (
@@ -64,6 +99,10 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
 
       {/* Breadcrumbs Navigation */}

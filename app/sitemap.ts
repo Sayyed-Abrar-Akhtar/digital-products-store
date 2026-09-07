@@ -4,12 +4,15 @@ import { getPublishedProducts, getPublishedCategories } from "@/lib/db/data-acce
 import { BLOG_POSTS } from "@/lib/data/store-data";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = SITE_CONFIG.url;
+  const baseUrl = SITE_CONFIG.url.replace(/\/$/, "");
+
+  // Stable baseline date for static pages to prevent unnecessary crawler churn on every request
+  const STATIC_LAST_MODIFIED = new Date("2025-01-01T00:00:00.000Z");
 
   const products = await getPublishedProducts();
   const categories = await getPublishedCategories();
 
-  // Static routes
+  // Public static routes that exist in the application
   const staticRoutes = [
     "",
     "/products",
@@ -25,12 +28,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     "/refunds",
   ].map((route) => ({
     url: `${baseUrl}${route}`,
-    lastModified: new Date(),
-    changeFrequency: "daily" as const,
+    lastModified: STATIC_LAST_MODIFIED,
+    changeFrequency: route === "" ? ("daily" as const) : ("weekly" as const),
     priority: route === "" ? 1.0 : 0.8,
   }));
 
-  // Product detail pages
+  // Public product detail pages from DB (drafts and archived excluded)
   const productRoutes = products.map((product) => ({
     url: `${baseUrl}/products/${product.slug}`,
     lastModified: new Date(product.updatedAt),
@@ -38,15 +41,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }));
 
-  // Category detail pages
+  // Public category detail pages
   const categoryRoutes = categories.map((category) => ({
     url: `${baseUrl}/categories/${category.slug}`,
-    lastModified: new Date(),
+    lastModified: STATIC_LAST_MODIFIED,
     changeFrequency: "weekly" as const,
     priority: 0.6,
   }));
 
-  // Blog post pages
+  // Public blog post pages
   const blogRoutes = BLOG_POSTS.map((post) => ({
     url: `${baseUrl}/blog/${post.slug}`,
     lastModified: new Date(post.publishedAt),
