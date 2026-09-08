@@ -1,0 +1,15 @@
+{
+  "name": "nextjs-16-developer-guide",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Practical Next.js 16 Developer Guide — Official Manuscript and Code Examples",
+  "scripts": {
+    "validate": "ts-node scripts/validate-manuscript.ts",
+    "typecheck": "tsc --noEmit",
+    "test:examples": "cd examples/acme-app && npm run typecheck"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "typescript": "^5.3.3"
+  }
+}

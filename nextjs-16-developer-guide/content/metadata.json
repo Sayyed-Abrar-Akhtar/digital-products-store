@@ -1,0 +1,24 @@
+{
+  "id": "practical-nextjs-16-developer-guide",
+  "workingTitle": "Practical Next.js 16 Developer Guide",
+  "subtitle": "Building Production-Ready Applications with Next.js 16, React 19, and the App Router",
+  "author": {
+    "name": "Sayyed Abrar Akhtar",
+    "role": "Lead Architect & Developer",
+    "url": "https://store.sayyedabrarakhtar.com.np"
+  },
+  "version": "0.1.0",
+  "publicationStatus": "in_development",
+  "description": "A comprehensive, practical guide to building high-performance, accessible, and secure web applications using Next.js 16 (16.3.4), React 19, and modern web standards.",
+  "targetAudience": "Intermediate to advanced JavaScript/TypeScript developers, full-stack engineers, and software architects looking to master modern Next.js 16 App Router patterns and production deployment workflows.",
+  "technologies": {
+    "framework": "Next.js 16.x",
+    "targetVersion": "16.3.4",
+    "reactVersion": "19.x",
+    "nodeRequirement": ">=20.0.0",
+    "language": "TypeScript 5.x",
+    "styling": "Tailwind CSS v4 / v3.4"
+  },
+  "copyright": "Copyright © 2026 Sayyed Abrar Akhtar. All rights reserved.",
+  "licenseNotice": "DRAFT — FINAL LICENSE TO BE REVIEWED BEFORE SALE"
+}
