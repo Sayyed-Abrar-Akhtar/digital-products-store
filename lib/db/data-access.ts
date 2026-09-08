@@ -103,6 +103,196 @@ export async function getPublishedProducts(): Promise<Product[]> {
   return FALLBACK_PRODUCTS.filter((p) => PUBLIC_STATUSES.includes(p.status));
 }
 
+export interface CatalogQueryParams {
+  q?: string;
+  category?: string;
+  type?: string;
+  free?: boolean | string;
+  sort?: "newest" | "price-asc" | "price-desc" | "featured";
+}
+
+/**
+ * Filter, search, and sort public products dynamically.
+ * Strictly excludes draft and archived products.
+ */
+export async function searchAndFilterProducts(params: CatalogQueryParams = {}): Promise<Product[]> {
+  const { q, category: categorySlug, type: productType, free, sort = "newest" } = params;
+  const isFreeOnly = free === true || free === "true" || free === "1";
+
+  try {
+    const mongoose = await connectToDatabase();
+    if (mongoose) {
+      const query: any = {
+        status: { $in: PUBLIC_STATUSES },
+      };
+
+      if (categorySlug) {
+        const categoryDoc = await CategoryModel.findOne({ slug: categorySlug }).lean();
+        if (categoryDoc) {
+          query.category = categoryDoc._id;
+        } else {
+          // If category slug is invalid, return empty array
+          return [];
+        }
+      }
+
+      if (productType) {
+        query.productType = productType;
+      }
+
+      if (isFreeOnly) {
+        query.$or = [{ isFree: true }, { price: 0 }];
+      }
+
+      if (q && q.trim().length > 0) {
+        const searchRegex = new RegExp(q.trim().replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "i");
+        const matchingTags = await TagModel.find({
+          $or: [{ name: searchRegex }, { slug: searchRegex }],
+        }).select("_id").lean();
+        const tagIds = matchingTags.map((t) => t._id);
+
+        const matchingCats = await CategoryModel.find({
+          $or: [{ name: searchRegex }, { slug: searchRegex }],
+        }).select("_id").lean();
+        const catIds = matchingCats.map((c) => c._id);
+
+        const textOrFilter: any[] = [
+          { name: searchRegex },
+          { shortDescription: searchRegex },
+          { description: searchRegex },
+        ];
+
+        if (tagIds.length > 0) {
+          textOrFilter.push({ tags: { $in: tagIds } });
+        }
+        if (catIds.length > 0) {
+          textOrFilter.push({ category: { $in: catIds } });
+        }
+
+        if (query.$or) {
+          query.$and = [{ $or: query.$or }, { $or: textOrFilter }];
+          delete query.$or;
+        } else {
+          query.$or = textOrFilter;
+        }
+      }
+
+      let sortOption: any = { createdAt: -1 };
+      if (sort === "price-asc") {
+        sortOption = { price: 1, createdAt: -1 };
+      } else if (sort === "price-desc") {
+        sortOption = { price: -1, createdAt: -1 };
+      } else if (sort === "featured") {
+        sortOption = { featured: -1, createdAt: -1 };
+      }
+
+      const docs = await ProductModel.find(query)
+        .populate("category")
+        .populate("tags")
+        .sort(sortOption)
+        .lean();
+
+      return docs.map(mapProduct);
+    }
+  } catch (err) {
+    console.error("Error in searchAndFilterProducts:", err);
+  }
+
+  // Fallback memory filtering
+  let filtered = FALLBACK_PRODUCTS.filter((p) => PUBLIC_STATUSES.includes(p.status));
+
+  if (categorySlug) {
+    filtered = filtered.filter((p) => p.categorySlug === categorySlug);
+  }
+
+  if (productType) {
+    filtered = filtered.filter((p) => (p as any).productType === productType || (p as any).type === productType);
+  }
+
+  if (isFreeOnly) {
+    filtered = filtered.filter((p) => p.isFree || p.price === 0);
+  }
+
+  if (q && q.trim().length > 0) {
+    const term = q.trim().toLowerCase();
+    filtered = filtered.filter((p) =>
+      p.name.toLowerCase().includes(term) ||
+      p.shortDescription.toLowerCase().includes(term) ||
+      p.description.toLowerCase().includes(term) ||
+      p.categoryName.toLowerCase().includes(term) ||
+      p.tags.some((t) => t.toLowerCase().includes(term))
+    );
+  }
+
+  if (sort === "price-asc") {
+    filtered.sort((a, b) => a.price - b.price);
+  } else if (sort === "price-desc") {
+    filtered.sort((a, b) => b.price - a.price);
+  } else if (sort === "featured") {
+    filtered.sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0));
+  } else {
+    filtered.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  }
+
+  return filtered;
+}
+
+/**
+ * Fetch related products for a product based on category and tags.
+ */
+export async function getRelatedProducts(product: Product, limit: number = 3): Promise<Product[]> {
+  try {
+    const mongoose = await connectToDatabase();
+    if (mongoose) {
+      const categoryDoc = await CategoryModel.findOne({ slug: product.categorySlug }).lean();
+      const query: any = {
+        _id: { $ne: product.id },
+        status: { $in: PUBLIC_STATUSES },
+      };
+
+      if (categoryDoc) {
+        query.category = categoryDoc._id;
+      }
+
+      let docs = await ProductModel.find(query)
+        .populate("category")
+        .populate("tags")
+        .limit(limit)
+        .lean();
+
+      if (docs.length < limit) {
+        const remainingLimit = limit - docs.length;
+        const excludeIds = [product.id, ...docs.map((d) => d._id.toString())];
+        const extraDocs = await ProductModel.find({
+          _id: { $nin: excludeIds },
+          status: { $in: PUBLIC_STATUSES },
+        })
+          .populate("category")
+          .populate("tags")
+          .limit(remainingLimit)
+          .lean();
+
+        docs = [...docs, ...extraDocs];
+      }
+
+      return docs.map(mapProduct);
+    }
+  } catch (err) {
+    console.error("Error in getRelatedProducts:", err);
+  }
+
+  const publicFallback = FALLBACK_PRODUCTS.filter(
+    (p) => p.id !== product.id && PUBLIC_STATUSES.includes(p.status)
+  );
+  const sameCategory = publicFallback.filter((p) => p.categorySlug === product.categorySlug);
+  if (sameCategory.length >= limit) {
+    return sameCategory.slice(0, limit);
+  }
+
+  const otherProducts = publicFallback.filter((p) => p.categorySlug !== product.categorySlug);
+  return [...sameCategory, ...otherProducts].slice(0, limit);
+}
+
 /**
  * Fetch featured published/public products.
  */
