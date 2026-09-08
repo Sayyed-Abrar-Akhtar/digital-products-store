@@ -1,10 +1,18 @@
 # dependencies
-/node_modules
+node_modules
+node_modules/
+**/node_modules
+**/node_modules/
+nextjs-16-developer-guide/examples/acme-app/node_modules/
+nextjs-16-developer-guide/examples/acme-app/node_modules
 /.pnpm
 /.yarn
 
 # next.js
-/.next/
+.next
+.next/
+**/.next
+**/.next/
 /out/
 
 # production
