@@ -19,17 +19,28 @@ export async function generateMetadata({ params }: ProductDetailPageProps): Prom
   const product = await getProductBySlug(slug);
   if (!product) return { title: "Product Not Found" };
 
+  const canonicalUrl = `${SITE_CONFIG.url}/products/${product.slug}`;
+  const title = product.seoTitle || `${product.name} | ${SITE_CONFIG.name}`;
+  const description = product.seoDescription || product.shortDescription;
+
   return {
-    title: product.seoTitle || product.name,
-    description: product.seoDescription || product.shortDescription,
+    title,
+    description,
     alternates: {
-      canonical: `${SITE_CONFIG.url}/products/${product.slug}`,
+      canonical: canonicalUrl,
     },
     openGraph: {
       title: product.name,
-      description: product.shortDescription,
-      url: `${SITE_CONFIG.url}/products/${product.slug}`,
+      description,
+      url: canonicalUrl,
       type: "website",
+      images: product.images.length > 0 ? product.images : [SITE_CONFIG.ogImage],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: product.name,
+      description,
+      images: product.images.length > 0 ? [product.images[0]] : [SITE_CONFIG.ogImage],
     },
   };
 }
@@ -46,6 +57,8 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
   const relatedProducts = categoryProducts
     .filter((p) => p.id !== product.id && p.slug !== product.slug)
     .slice(0, 2);
+
+  const productCanonicalUrl = `${SITE_CONFIG.url}/products/${product.slug}`;
 
   const breadcrumbJsonLd = {
     "@context": "https://schema.org",
@@ -67,9 +80,27 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
         "@type": "ListItem",
         "position": 3,
         "name": product.name,
-        "item": `${SITE_CONFIG.url}/products/${product.slug}`,
+        "item": productCanonicalUrl,
       },
     ],
+  };
+
+  const productJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": product.name,
+    "description": product.shortDescription,
+    "category": product.categoryName,
+    "image": product.images.length > 0 ? product.images : [SITE_CONFIG.ogImage],
+    "offers": {
+      "@type": "Offer",
+      "priceCurrency": product.currency,
+      "price": product.price,
+      "availability": product.status === "published"
+        ? "https://schema.org/InStock"
+        : "https://schema.org/PreOrder",
+      "url": productCanonicalUrl,
+    },
   };
 
   return (
@@ -77,6 +108,10 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }}
       />
 
       {/* Breadcrumbs Navigation */}
