@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { SITE_CONFIG } from "@/lib/config/site";
 import { Container } from "./container";
 import { Button } from "@/components/ui/button";
@@ -19,9 +20,14 @@ export function Header() {
             className="flex items-center gap-2 text-base font-bold tracking-tight text-foreground hover:opacity-90 transition-opacity"
             onClick={() => setMobileMenuOpen(false)}
           >
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground font-mono font-bold text-sm">
-              S
-            </div>
+            <Image
+              src="/logo-transparent.png"
+              alt={`${SITE_CONFIG.name} Logo`}
+              width={32}
+              height={32}
+              className="h-8 w-8 object-contain"
+              priority
+            />
             <span>{SITE_CONFIG.shortName}</span>
           </Link>
 
