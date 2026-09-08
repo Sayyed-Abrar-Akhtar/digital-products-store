@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { SITE_CONFIG } from "@/lib/config/site";
 import { Container } from "./container";
 
@@ -12,9 +13,13 @@ export function Footer() {
               href="/"
               className="flex items-center gap-2 text-base font-bold tracking-tight text-foreground"
             >
-              <div className="flex h-7 w-7 items-center justify-center rounded-md bg-primary text-primary-foreground font-mono font-bold text-xs">
-                S
-              </div>
+              <Image
+                src="/logo-transparent.png"
+                alt={`${SITE_CONFIG.name} Logo`}
+                width={28}
+                height={28}
+                className="h-7 w-7 object-contain"
+              />
               <span>{SITE_CONFIG.name}</span>
             </Link>
             <p className="text-xs text-muted-foreground leading-relaxed max-w-xs">

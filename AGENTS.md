@@ -19,3 +19,12 @@
   - Never hardcode or expose secrets, API keys, or sensitive credentials in source code or client bundles.
   - Do NOT implement fake security, mock authentication claims, or pseudo-payment bypass mechanisms.
 - **Verification**: Always run linting (`npm run lint`), TypeScript checks (`npx tsc --noEmit`), and production builds (`npm run build`) before marking tasks complete.
+
+## Brand Assets & Logo Usage
+- **Logo Files**:
+  - `public/logo.png`: Main brand logo with solid background (1254x1254).
+  - `public/logo-transparent.png`: Main brand logo with transparent background (1254x1254).
+- **UI Guidelines**:
+  - Use `public/logo-transparent.png` for header/footer logos and UI header navigation where background blending is required.
+  - Use `public/logo.png` for solid background logo representations, previews, or social metadata assets.
+  - Ensure all rendered logo image tags include appropriate `alt` attributes and maintain correct aspect ratios using Next.js `Image`.

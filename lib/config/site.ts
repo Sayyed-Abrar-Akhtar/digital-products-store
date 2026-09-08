@@ -1,6 +1,6 @@
 export const SITE_CONFIG = {
-  name: "Sayyed Digital Store",
-  shortName: "Digital Store",
+  name: "Digital Store",
+  shortName: "Store",
   description:
     "Premium digital products, developer tools, design systems, and free learning resources for modern builders.",
   url: process.env.NEXT_PUBLIC_SITE_URL || "https://store.sayyedabrarakhtar.com.np",
