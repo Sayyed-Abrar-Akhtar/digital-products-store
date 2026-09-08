@@ -3,13 +3,12 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { Container } from "@/components/layout/container";
 import { SectionHeader } from "@/components/ui/section-header";
-import { Card, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { getCategoryBySlug, getProductsByCategory } from "@/lib/db/data-access";
+import { ProductCard } from "@/components/ui/product-card";
+import { CatalogEmptyState } from "@/components/catalog/catalog-empty-state";
+import { getCategoryBySlug, getProductsByCategory, getPublishedCategories } from "@/lib/db/data-access";
 import { SITE_CONFIG } from "@/lib/config/site";
-import { formatCurrency } from "@/lib/utils";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, ArrowLeft } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface CategoryDetailPageProps {
   params: Promise<{ slug: string }>;
@@ -100,33 +99,26 @@ export default async function CategoryDetailPage({ params }: CategoryDetailPageP
         badge="Category"
       />
 
+      <div className="flex items-center justify-between text-xs font-mono text-muted-foreground mb-6 pb-2 border-b border-card-border">
+        <div>
+          Showing <span className="font-bold text-foreground">{categoryProducts.length}</span> published {categoryProducts.length === 1 ? "product" : "products"}
+        </div>
+        <Button variant="ghost" size="sm" asChild className="h-7 text-xs gap-1">
+          <Link href="/products">
+            <ArrowLeft className="w-3.5 h-3.5" />
+            <span>All Catalog Products</span>
+          </Link>
+        </Button>
+      </div>
+
       {categoryProducts.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {categoryProducts.map((product) => (
-            <Card key={product.id} className="flex flex-col h-full">
-              <CardHeader>
-                <div className="flex items-center justify-between gap-2 mb-2">
-                  <Badge variant="secondary">{product.categoryName}</Badge>
-                  {product.badge && <Badge variant="accent">{product.badge}</Badge>}
-                </div>
-                <CardTitle>{product.name}</CardTitle>
-                <CardDescription>{product.shortDescription}</CardDescription>
-              </CardHeader>
-              <CardFooter className="flex items-center justify-between pt-4 mt-auto">
-                <span className="text-xl font-bold font-mono">
-                  {formatCurrency(product.price, product.currency)}
-                </span>
-                <Button size="sm" asChild>
-                  <Link href={`/products/${product.slug}`}>View Product</Link>
-                </Button>
-              </CardFooter>
-            </Card>
+            <ProductCard key={product.id} product={product} />
           ))}
         </div>
       ) : (
-        <div className="text-center py-12 border border-dashed border-card-border rounded-xl">
-          <p className="text-muted-foreground">No products in this category currently.</p>
-        </div>
+        <CatalogEmptyState type="empty-category" categoryName={category.name} />
       )}
     </Container>
   );

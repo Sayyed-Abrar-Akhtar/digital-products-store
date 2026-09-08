@@ -7,6 +7,8 @@ import {
   getCategoryBySlug,
   getProductsByCategory,
   getFeaturedProducts,
+  searchAndFilterProducts,
+  getRelatedProducts,
 } from "../lib/db/data-access";
 
 describe("Catalog Data Access Layer Tests", () => {
@@ -89,6 +91,44 @@ describe("Catalog Data Access Layer Tests", () => {
       assert.equal(p.featured, true);
       assert.notEqual(p.status, "draft");
       assert.notEqual(p.status, "archived");
+    }
+  });
+
+  test("searchAndFilterProducts filters by search query and category correctly", async () => {
+    const searchResults = await searchAndFilterProducts({ q: "SaaS" });
+    assert.ok(Array.isArray(searchResults));
+    assert.ok(searchResults.length >= 1);
+    for (const p of searchResults) {
+      assert.notEqual(p.status, "draft");
+      assert.notEqual(p.status, "archived");
+    }
+
+    const freeResults = await searchAndFilterProducts({ free: true });
+    assert.ok(Array.isArray(freeResults));
+    assert.ok(freeResults.length >= 3);
+    for (const p of freeResults) {
+      assert.ok(p.isFree || p.price === 0);
+    }
+
+    const sortedAsc = await searchAndFilterProducts({ sort: "price-asc" });
+    for (let i = 0; i < sortedAsc.length - 1; i++) {
+      assert.ok(sortedAsc[i].price <= sortedAsc[i + 1].price);
+    }
+  });
+
+  test("getRelatedProducts retrieves related public products excluding self", async () => {
+    const products = await getPublishedProducts();
+    const target = products[0];
+
+    const related = await getRelatedProducts(target, 3);
+    assert.ok(Array.isArray(related));
+    assert.ok(related.length <= 3);
+
+    for (const rel of related) {
+      assert.notEqual(rel.id, target.id);
+      assert.notEqual(rel.slug, target.slug);
+      assert.notEqual(rel.status, "draft");
+      assert.notEqual(rel.status, "archived");
     }
   });
 });

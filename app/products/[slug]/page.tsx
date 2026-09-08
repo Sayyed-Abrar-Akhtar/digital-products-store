@@ -5,7 +5,8 @@ import { Container } from "@/components/layout/container";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { getProductBySlug, getProductsByCategory } from "@/lib/db/data-access";
+import { getProductBySlug, getRelatedProducts } from "@/lib/db/data-access";
+import { ProductCard } from "@/components/ui/product-card";
 import { SITE_CONFIG } from "@/lib/config/site";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { Check, Shield, ChevronRight, Terminal, Layers } from "lucide-react";
@@ -53,10 +54,7 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
     notFound();
   }
 
-  const categoryProducts = await getProductsByCategory(product.categorySlug);
-  const relatedProducts = categoryProducts
-    .filter((p) => p.id !== product.id && p.slug !== product.slug)
-    .slice(0, 2);
+  const relatedProducts = await getRelatedProducts(product, 3);
 
   const productCanonicalUrl = `${SITE_CONFIG.url}/products/${product.slug}`;
 
@@ -175,25 +173,14 @@ export default async function ProductDetailPage({ params }: ProductDetailPagePro
 
           {/* Related Products */}
           {relatedProducts.length > 0 && (
-            <div className="border-t border-card-border pt-8 space-y-4">
+            <div className="border-t border-card-border pt-8 space-y-6">
               <h2 className="text-xl font-bold text-foreground flex items-center gap-2">
                 <Layers className="w-5 h-5 text-accent" />
                 <span>Related Products</span>
               </h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {relatedProducts.map((rel) => (
-                  <Card key={rel.id} className="p-4 flex flex-col justify-between">
-                    <div>
-                      <h3 className="font-bold text-base text-foreground mb-1">{rel.name}</h3>
-                      <p className="text-xs text-muted-foreground line-clamp-2">{rel.shortDescription}</p>
-                    </div>
-                    <div className="mt-4 pt-3 border-t border-card-border flex items-center justify-between">
-                      <span className="font-mono text-xs font-bold">{formatCurrency(rel.price, rel.currency)}</span>
-                      <Button size="sm" variant="ghost" asChild>
-                        <Link href={`/products/${rel.slug}`}>View</Link>
-                      </Button>
-                    </div>
-                  </Card>
+                  <ProductCard key={rel.id} product={rel} />
                 ))}
               </div>
             </div>

@@ -17,9 +17,14 @@ export function FreeResourcesSection() {
             badge="Free Downloads"
             className="mb-0"
           />
-          <Button variant="ghost" asChild className="gap-2 self-start sm:self-auto">
-            <Link href="/free">View All Free Assets</Link>
-          </Button>
+          <div className="flex items-center gap-2 self-start sm:self-auto">
+            <Button variant="outline" size="sm" asChild>
+              <Link href="/products?free=true">Filter Catalog (Free Only)</Link>
+            </Button>
+            <Button variant="ghost" size="sm" asChild>
+              <Link href="/free">View All Free Assets</Link>
+            </Button>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

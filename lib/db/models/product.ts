@@ -102,5 +102,13 @@ const ProductSchema = new Schema<IProduct>(
   }
 );
 
+// Compound indexes to optimize catalog filter & sort queries
+ProductSchema.index({ status: 1, createdAt: -1 });
+ProductSchema.index({ status: 1, category: 1 });
+ProductSchema.index({ status: 1, productType: 1 });
+ProductSchema.index({ status: 1, isFree: 1 });
+ProductSchema.index({ status: 1, featured: 1 });
+ProductSchema.index({ status: 1, price: 1 });
+
 export const Product: Model<IProduct> =
   mongoose.models.Product || mongoose.model<IProduct>("Product", ProductSchema);
