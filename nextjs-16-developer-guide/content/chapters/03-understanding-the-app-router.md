@@ -118,7 +118,8 @@ interface PageProps {
 }
 
 async function fetchOrgDetails(orgId: string) {
-  // Simulating database lookup
+  // Simulating database lookup.
+  // Note: Returned details below represent illustrative sample data for demonstration purposes.
   if (orgId === "invalid") return null;
   return { id: orgId, name: orgId.toUpperCase().replace("-", " "), status: "active" };
 }

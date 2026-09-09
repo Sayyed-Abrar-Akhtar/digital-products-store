@@ -28,7 +28,7 @@ npx create-next-app@16.3.4 acme-app \
   --tailwind \
   --eslint \
   --app \
-  --src-dir \
+  --no-src-dir \
   --import-alias "@/*" \
   --use-npm
 ```
@@ -60,7 +60,7 @@ Next.js 16 automatically generates and manages `tsconfig.json`. When targeting R
       }
     ],
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
@@ -84,9 +84,8 @@ const nextConfig: NextConfig = {
   // Disable 'X-Powered-By: Next.js' header for basic security hardening
   poweredByHeader: false,
 
-  // Enable Turbopack compilation settings
+  // Enable Next.js Typed Routes for route parameter type safety
   experimental: {
-    // Typed routes validation
     typedRoutes: true,
   },
 
@@ -118,7 +117,7 @@ export default nextConfig;
 
 In our reference **Acme App**, we enforce strict runtime validation for environment variables during application startup to prevent silent failures in production.
 
-### 1. Environment Variable Schema (`src/lib/env.ts`)
+### 1. Environment Variable Schema (`lib/env.ts`)
 ```typescript
 import "server-only";
 
@@ -138,11 +137,13 @@ function getEnvVar(key: string, defaultValue?: string): string {
 }
 
 export function getAppConfig(): AppConfig {
+  // Sensitive secrets (like ADMIN_AUTH_SECRET) MUST be supplied via environment configuration (.env.local)
+  // and MUST NOT normalize insecure in-code default fallback strings.
   return {
     nodeEnv: (process.env.NODE_ENV || "development") as AppConfig["nodeEnv"],
     siteUrl: getEnvVar("NEXT_PUBLIC_SITE_URL", "http://localhost:3000"),
     mongoUri: getEnvVar("MONGODB_URI", "mongodb://localhost:27017/acme_dev"),
-    adminSecret: getEnvVar("ADMIN_AUTH_SECRET", "dev_secret_key_change_in_prod"),
+    adminSecret: getEnvVar("ADMIN_AUTH_SECRET"),
   };
 }
 ```

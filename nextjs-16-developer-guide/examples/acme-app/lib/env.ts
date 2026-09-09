@@ -16,10 +16,12 @@ function getEnvVar(key: string, defaultValue?: string): string {
 }
 
 export function getAppConfig(): AppConfig {
+  // Sensitive secrets (like ADMIN_AUTH_SECRET) MUST be supplied via environment configuration (.env.local)
+  // and MUST NOT normalize insecure in-code default fallback strings.
   return {
     nodeEnv: (process.env.NODE_ENV || "development") as AppConfig["nodeEnv"],
     siteUrl: getEnvVar("NEXT_PUBLIC_SITE_URL", "http://localhost:3000"),
     mongoUri: getEnvVar("MONGODB_URI", "mongodb://localhost:27017/acme_dev"),
-    adminSecret: getEnvVar("ADMIN_AUTH_SECRET", "dev_secret_key_change_in_prod"),
+    adminSecret: getEnvVar("ADMIN_AUTH_SECRET"),
   };
 }
