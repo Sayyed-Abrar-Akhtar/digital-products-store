@@ -6,7 +6,8 @@ export interface Metric {
 }
 
 export async function getDashboardMetrics(): Promise<Metric[]> {
-  // Simulating async server data access pattern in Next.js 16 (Target 16.3.4)
+  // Simulating async server data access pattern in Next.js 16 (Target 16.3.4).
+  // Note: Hardcoded metrics below represent illustrative sample data for demonstration purposes.
   return [
     { id: "m1", label: "Active Organizations", value: "1,248", status: "healthy" },
     { id: "m2", label: "Monthly Recurring Revenue", value: "$42,500", status: "healthy" },

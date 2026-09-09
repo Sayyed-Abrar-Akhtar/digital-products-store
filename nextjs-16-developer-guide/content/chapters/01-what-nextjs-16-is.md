@@ -44,8 +44,8 @@ React Server Components execute strictly on the Node.js or Edge runtime. They do
 +-----------------------------------------------------------------------+
 ```
 
-### Turbopack Engine as Default Build Foundation
-Next.js 16 establishes **Turbopack**—an ultra-fast Rust-based bundler—as the standard build tool for both development and production compilation. Turbopack replaces legacy Webpack setups, offering incremental compilation at the function and module level. Incremental bundling ensures sub-10ms Server-Sent Events (SSE) fast refreshes during local iteration, regardless of application scale.
+### Turbopack Engine for Local Development
+Next.js 16 establishes **Turbopack**—an ultra-fast Rust-based bundler—as the default bundler for local development (`next dev`). Turbopack replaces legacy Webpack setups during local iteration, offering incremental compilation at the function and module level for sub-10ms fast refreshes regardless of application scale. For production builds (`next build`), Next.js 16 uses Webpack by default, with Turbopack production compilation available as an opt-in flag (`next build --turbopack`).
 
 ### Explicit Caching Architecture
 A key shift in Next.js 16 is the explicit caching control model. Early App Router versions implicitly cached `fetch` requests globally by default, which led to unexpected stale data in dynamic dashboard environments. Next.js 16 replaces implicit caching with an explicit model powered by directives such as `'use cache'`, dynamic IO configuration, and targeted revalidation primitives (`revalidateTag`, `revalidatePath`).
@@ -58,7 +58,7 @@ To appreciate Next.js 16, developers must understand the constraints of the lega
 
 | Feature | Legacy Pages Router (`pages/`) | Modern App Router (`app/`) |
 | :--- | :--- | :--- |
-| **Default Component Type** | Client Component (ships code to browser) | Server Component (zero client bundle contribution) |
+| **Default Component Type** | Client Component (ships component JS code to browser) | Server Component (no component JS code shipped to browser) |
 | **Data Fetching API** | `getServerSideProps`, `getStaticProps` | Async Server Components (`async/await`), `fetch()` |
 | **Component Granularity** | Page-level fetching only | Any component in the layout/page tree |
 | **Streaming & Suspense** | Limited (Custom SSR wrappers) | Native out-of-order streaming via React 19 Suspense |
@@ -87,7 +87,8 @@ export interface SystemMetric {
 
 // Encapsulated server-side data access layer
 async function fetchSystemMetrics(): Promise<SystemMetric[]> {
-  // Simulating secure database access on Next.js 16 Server Runtime
+  // Simulating secure database access on Next.js 16 Server Runtime.
+  // Note: Hardcoded metrics below represent illustrative sample data for demonstration purposes.
   const metrics: SystemMetric[] = [
     { id: "m-101", key: "active_orgs", label: "Active Organizations", value: 1248, unit: "count", status: "healthy" },
     { id: "m-102", key: "mrr_usd", label: "Monthly Recurring Revenue", value: 42500, unit: "USD", status: "healthy" },
