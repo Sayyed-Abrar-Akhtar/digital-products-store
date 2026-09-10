@@ -43,6 +43,9 @@ app/
 5. **`error.tsx`**: Defines an error boundary using React 19 component error catching. Must always be declared as a Client Component (`'use client'`).
 6. **`not-found.tsx`**: Renders custom UI when the `notFound()` function is invoked within a server component or route segment.
 
+### Edge Routing Proxy & Middleware Interception
+Before incoming HTTP requests reach App Router layouts or pages, Next.js 16 evaluates edge routing proxy logic defined in `middleware.ts`. This edge proxy boundary handles request filtering, auth cookie validation, URL rewrites, dynamic redirects, and custom header injection before triggering server component execution.
+
 ### Layout Nesting & Navigation Architecture
 When navigating between nested routes (e.g., from `/dashboard/overview` to `/dashboard/analytics`), Next.js 16 performs a partial render. The shared `RootLayout` and `DashboardLayout` components remain mounted without re-rendering, while only the active child `page.tsx` segment is swapped out.
 

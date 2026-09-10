@@ -20,7 +20,9 @@ Next.js 16 represents a fundamental maturity point in full-stack web application
 ### The React 19 Integration & App Router Paradigm
 In prior framework generations, web applications relied heavily on client-side JavaScript execution to hydrate static markup and manage dynamic user interfaces. Next.js 16 natively leverages React 19 primitives—most notably **Async React Server Components (RSC)**, native **Server Actions**, and component-level concurrency controls.
 
-React Server Components execute strictly on the Node.js or Edge runtime. They do not ship their JavaScript source or dependencies to the client bundle. Instead, RSCs stream a binary React Server Component payload (JSON-like serialized format) directly to the browser. The browser then reconciles this payload with the DOM without unmounting active client state.
+React Server Components execute on the Node.js or Edge runtime. Their backend implementation code and server-side dependencies (such as database drivers or secret-handling utilities) are omitted from the client JavaScript bundle. Instead, RSCs execute on the server and stream a binary React Server Component payload (a serialized representation of rendered React elements and props) directly to the browser. The browser reconciles this stream with the client DOM without destroying active client state.
+
+It is important to note that while Server Component code remains strictly server-side, any Client Components (`'use client'`) referenced within a Server Component tree will ship their component code and client-side dependencies to the browser bundle as interactive islands.
 
 ```
 +-----------------------------------------------------------------------+
@@ -47,8 +49,17 @@ React Server Components execute strictly on the Node.js or Edge runtime. They do
 ### Turbopack Engine for Local Development
 Next.js 16 establishes **Turbopack**—an ultra-fast Rust-based bundler—as the default bundler for local development (`next dev`). Turbopack replaces legacy Webpack setups during local iteration, offering incremental compilation at the function and module level for sub-10ms fast refreshes regardless of application scale. For production builds (`next build`), Next.js 16 uses Webpack by default, with Turbopack production compilation available as an opt-in flag (`next build --turbopack`).
 
-### Explicit Caching Architecture
-A key shift in Next.js 16 is the explicit caching control model. Early App Router versions implicitly cached `fetch` requests globally by default, which led to unexpected stale data in dynamic dashboard environments. Next.js 16 replaces implicit caching with an explicit model powered by directives such as `'use cache'`, dynamic IO configuration, and targeted revalidation primitives (`revalidateTag`, `revalidatePath`).
+### Explicit Caching Architecture & Cache Components
+A pivotal architectural shift in Next.js 16 is the transition from implicit default caching to an explicit caching control model:
+
+- **Legacy Implicit Caching (Historical)**: In Next.js 13 and 14, `fetch` requests were cached globally by default (`force-cache`), which often led to unexpected stale data in dynamic application dashboards.
+- **Modern Explicit Caching (Next.js 16)**: Standard `fetch` requests in Next.js 16 are uncached by default (`no-store` semantics). Caching is explicitly enabled using **Cache Components** and the `'use cache'` directive (configured via `dynamicIO` in `next.config.ts`).
+- **`'use cache'` & Revalidation Primitives**: Decorating a function or component with `'use cache'` creates a cached boundary whose serialized execution result is reused across requests until invalidated via targeted revalidation primitives (`revalidateTag`, `revalidatePath`, `expireTag`, `expirePath`).
+
+### Edge Routing Proxy vs. Application Middleware
+Next.js 16 refines request interception terminology between edge network boundaries and application logic:
+- **Routing Proxy**: Operates at the network entry point before route resolution, intercepting incoming HTTP requests to apply redirects, rewrites, custom response headers, or bot detection prior to component execution.
+- **Middleware Convention (`middleware.ts`)**: The file-based convention used to implement edge routing proxy behavior in Next.js applications, executing lightweight logic before hitting App Router rendering engines.
 
 ### Historical Context: Legacy Pages Router vs. App Router
 To appreciate Next.js 16, developers must understand the constraints of the legacy **Pages Router** (`pages/` directory):
@@ -58,8 +69,8 @@ To appreciate Next.js 16, developers must understand the constraints of the lega
 
 | Feature | Legacy Pages Router (`pages/`) | Modern App Router (`app/`) |
 | :--- | :--- | :--- |
-| **Default Component Type** | Client Component (ships component JS code to browser) | Server Component (no component JS code shipped to browser) |
-| **Data Fetching API** | `getServerSideProps`, `getStaticProps` | Async Server Components (`async/await`), `fetch()` |
+| **Default Component Type** | Client Component (ships component JS code to browser) | Server Component (keeps component JS on server; client JS only for interactive leaves) |
+| **Data Fetching API** | `getServerSideProps`, `getStaticProps` | Async Server Components (`async/await`), `fetch()`, `'use cache'` |
 | **Component Granularity** | Page-level fetching only | Any component in the layout/page tree |
 | **Streaming & Suspense** | Limited (Custom SSR wrappers) | Native out-of-order streaming via React 19 Suspense |
 | **Mutations** | API Routes (`pages/api/*`) + `fetch` | Native Server Actions (`'use server'`) |

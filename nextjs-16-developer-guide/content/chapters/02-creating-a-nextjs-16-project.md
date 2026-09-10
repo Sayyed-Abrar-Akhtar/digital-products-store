@@ -17,6 +17,13 @@
 
 Starting a enterprise-ready Next.js 16 project requires deliberate choices regarding project layout, package management, compiler options, and environment handling. A naive setup can accumulate technical debt in type checking, build times, and deployment reliability.
 
+### Prerequisites & Node.js Requirements
+Next.js 16 requires **Node.js 20.0.0 or higher** (LTS versions such as Node v20 or Node v22 are strongly recommended). Ensure your development environment and deployment build workers satisfy this requirement:
+
+```bash
+node -v # Should return >= v20.0.0
+```
+
 ### Official CLI Scaffolding (`create-next-app`)
 The primary entry point for initializing a Next.js 16 application is `create-next-app`. In Next.js 16, the CLI defaults to App Router, TypeScript, and Tailwind CSS.
 
@@ -118,6 +125,12 @@ export default nextConfig;
 In our reference **Acme App**, we enforce strict runtime validation for environment variables during application startup to prevent silent failures in production.
 
 ### 1. Environment Variable Schema (`lib/env.ts`)
+
+#### Security Practice: Eliminating Hardcoded Secret Fallbacks
+A frequent vulnerability in web applications is providing predictable default fallback secrets in code (for example: `const secret = process.env.ADMIN_SECRET || "dev_secret_key_change_in_prod"`). If such code is deployed to production without the environment variable explicitly set, the application operates with a public, hardcoded secret key, exposing administrative endpoints to compromise.
+
+In Next.js 16, secret environment variables (such as `ADMIN_AUTH_SECRET`) **must never normalize insecure default fallback strings**. Instead, the environment validation schema must fail fast at startup if a required secret is missing:
+
 ```typescript
 import "server-only";
 
@@ -143,7 +156,7 @@ export function getAppConfig(): AppConfig {
     nodeEnv: (process.env.NODE_ENV || "development") as AppConfig["nodeEnv"],
     siteUrl: getEnvVar("NEXT_PUBLIC_SITE_URL", "http://localhost:3000"),
     mongoUri: getEnvVar("MONGODB_URI", "mongodb://localhost:27017/acme_dev"),
-    adminSecret: getEnvVar("ADMIN_AUTH_SECRET"),
+    adminSecret: getEnvVar("ADMIN_AUTH_SECRET"), // Throws immediately if missing
   };
 }
 ```
@@ -157,6 +170,7 @@ export function getAppConfig(): AppConfig {
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
+    "build:turbopack": "next build --turbopack",
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit"
