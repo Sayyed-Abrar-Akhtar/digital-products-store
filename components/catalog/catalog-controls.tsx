@@ -42,11 +42,13 @@ export function CatalogControls({ categories, totalProducts }: CatalogControlsPr
   const currentSort = searchParams.get("sort") || "newest";
 
   const [searchTerm, setSearchTerm] = useState(currentQ);
+  const [prevCurrentQ, setPrevCurrentQ] = useState(currentQ);
   const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
 
-  useEffect(() => {
+  if (currentQ !== prevCurrentQ) {
+    setPrevCurrentQ(currentQ);
     setSearchTerm(currentQ);
-  }, [currentQ]);
+  }
 
   const updateQueryParams = useCallback(
     (updates: Record<string, string | boolean | null>) => {
@@ -258,7 +260,7 @@ export function CatalogControls({ categories, totalProducts }: CatalogControlsPr
             <span className="text-muted-foreground">Active:</span>
             {currentQ && (
               <Badge variant="outline" className="text-[10px] gap-1">
-                Query: "{currentQ}"
+                Query: &quot;{currentQ}&quot;
                 <X className="w-3 h-3 cursor-pointer" onClick={handleClearSearch} />
               </Badge>
             )}
