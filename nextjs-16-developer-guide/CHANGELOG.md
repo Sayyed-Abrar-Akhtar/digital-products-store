@@ -6,6 +6,22 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
+## [0.2.0] - 2026-03-29
+
+### Added
+- Advanced production manuscript content for **Part I — Modern Next.js** (Chapters 4–6):
+  - `04-project-structure.md`: Mandatory framework file-system conventions (`app/`, `public/`) vs application-level conventions (`components/`, `lib/`, `services/`, `types/`); architectural trade-offs across route-oriented, feature-oriented, and layered organizational paradigms; server data access boundaries with `import 'server-only'`; runtime environment schema validation avoiding unsafe hardcoded fallback secrets.
+  - `05-routing-and-layouts.md`: Comprehensive App Router file-system routing in Next.js 16; static, dynamic (`[slug]`), catch-all (`[...slug]`), optional catch-all (`[[...slug]]`), and Route Group (`(group)`) segment types; persistent layouts (`layout.tsx`) vs re-mounting templates (`template.tsx`); special boundary files (`loading.tsx`, `error.tsx`, `not-found.tsx`); declarative `<Link>` vs `useRouter` vs server `redirect`; Next.js 16 asynchronous `Promise<params>` and `Promise<searchParams>` contracts.
+  - `06-server-components.md`: Deep mental model of React 19 Server Components; dual runtime model (Server Runtime vs Client Runtime); RSC binary payload streaming; `"use client"` execution boundaries; composition patterns (passing Server Components as `children` into Client Components); props serialization requirements; secret protection with `server-only`; clear criteria for when Client Components are strictly required.
+- Extended Acme App reference implementation (`examples/acme-app/`):
+  - Added server-side data access layer in `lib/projects.ts` protected by `server-only`.
+  - Added nested dashboard layout (`app/dashboard/layout.tsx`), overview page (`app/dashboard/page.tsx`), and projects list page (`app/dashboard/projects/page.tsx`).
+  - Added dynamic route segment page (`app/dashboard/projects/[slug]/page.tsx`) with async `params` and `searchParams` contracts.
+  - Added streaming loading skeleton (`app/dashboard/projects/loading.tsx`), interactive client error boundary (`app/dashboard/error.tsx`), and custom 404 handler (`app/dashboard/not-found.tsx`).
+  - Added route-local interactive leaf Client Component (`app/dashboard/projects/_components/status-toggle.tsx`).
+
+---
+
 ## [0.1.0] - 2026-03-06
 
 ### Added
