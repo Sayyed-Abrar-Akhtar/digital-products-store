@@ -7,8 +7,8 @@
     "role": "Lead Architect & Developer",
     "url": "https://store.sayyedabrarakhtar.com.np"
   },
-  "version": "0.1.0",
-  "publicationStatus": "in_development",
+  "version": "1.0.0",
+  "publicationStatus": "published",
   "description": "A comprehensive, practical guide to building high-performance, accessible, and secure web applications using Next.js 16 (16.3.4), React 19, and modern web standards.",
   "targetAudience": "Intermediate to advanced JavaScript/TypeScript developers, full-stack engineers, and software architects looking to master modern Next.js 16 App Router patterns and production deployment workflows.",
   "technologies": {
@@ -20,5 +20,5 @@
     "styling": "Tailwind CSS v4 / v3.4"
   },
   "copyright": "Copyright © 2026 Sayyed Abrar Akhtar. All rights reserved.",
-  "licenseNotice": "DRAFT — FINAL LICENSE TO BE REVIEWED BEFORE SALE"
+  "licenseNotice": "Official Commercial Publication Edition"
 }

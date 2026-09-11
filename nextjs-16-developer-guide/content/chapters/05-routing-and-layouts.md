@@ -203,7 +203,7 @@ export default async function AdminPage() {
 
 ---
 
-## Practical Example in Acme App
+## Practical Example
 
 In our reference **Acme App**, we construct a nested project details route (`app/dashboard/projects/[slug]/page.tsx`) that consumes dynamic route parameters and search query params asynchronously in Next.js 16.
 

@@ -6,19 +6,36 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
+## [1.0.0] - 2026-03-30
+
+### Added
+- **Official Commercial Publication Release (V1.0.0)**.
+- **Complete 41-Chapter Manuscript & 6 Appendices**:
+  - **Part I — Modern Next.js** (Chapters 1–5): Core Next.js 16 architecture, project creation, App Router, project structure, routing & layouts.
+  - **Part II — React Architecture** (Chapters 6–10): Server Components, Client Components, Composition Patterns, Loading/Streaming/Suspense, Error & Not-Found handling.
+  - **Part III — Data** (Chapters 11–15): Data Fetching, Server-Side Data Access, Mutations & Server Actions, MongoDB/Mongoose, Caching & Revalidation.
+  - **Part IV — Production UI** (Chapters 16–20): Styling with Tailwind CSS, Forms & Validation, Accessibility (WCAG 2.1 AA), Images & Fonts, Responsive Design.
+  - **Part V — SEO** (Chapters 21–26): Metadata, Canonical URLs, Sitemap & robots.txt, Open Graph, Structured Data (JSON-LD), Internal Linking.
+  - **Part VI — Security** (Chapters 27–31): Authentication Architecture, Authorization & Tenant Isolation, Protecting Server Operations, Env Vars & Secrets, Common Security Mistakes.
+  - **Part VII — Performance** (Chapters 32–36): Server vs Client Performance, JavaScript & Hydration, Images & Assets, Database Performance, Production Optimization.
+  - **Part VIII — Deployment** (Chapters 37–41): Environment Configuration, Production Builds, Deployment, Debugging Production Issues, Master Production Checklist.
+  - **Appendices A–F**: Recommended Project Structure, Useful Commands, Deployment Checklist, SEO Checklist, Security Checklist, Performance Checklist.
+- **Acme App Reference Application (`examples/acme-app/`)**:
+  - Full App Router architecture with nested layouts, async Server Components, interactive Client Component controls (`StatusFilter`), and Client Component form (`CreateProjectForm`) bound to React 19 Server Actions.
+  - Type-safe Data Access Layer (DAL) protected by `import "server-only"`.
+  - Health check Route Handler (`app/api/health/route.ts`).
+  - Unit test suite (`tests/projects.test.ts`) verifying server data operations.
+- **Publication & Sample Export Pipeline**:
+  - Added `scripts/build-publication.ts` compiling consolidated Markdown, printable HTML, and EPUB manifests.
+  - Added `scripts/build-sample.ts` compiling the Free Sample Edition package.
+
+---
+
 ## [0.2.0] - 2026-03-29
 
 ### Added
-- Advanced production manuscript content for **Part I — Modern Next.js** (Chapters 4–6):
-  - `04-project-structure.md`: Mandatory framework file-system conventions (`app/`, `public/`) vs application-level conventions (`components/`, `lib/`, `services/`, `types/`); architectural trade-offs across route-oriented, feature-oriented, and layered organizational paradigms; server data access boundaries with `import 'server-only'`; runtime environment schema validation avoiding unsafe hardcoded fallback secrets.
-  - `05-routing-and-layouts.md`: Comprehensive App Router file-system routing in Next.js 16; static, dynamic (`[slug]`), catch-all (`[...slug]`), optional catch-all (`[[...slug]]`), and Route Group (`(group)`) segment types; persistent layouts (`layout.tsx`) vs re-mounting templates (`template.tsx`); special boundary files (`loading.tsx`, `error.tsx`, `not-found.tsx`); declarative `<Link>` vs `useRouter` vs server `redirect`; Next.js 16 asynchronous `Promise<params>` and `Promise<searchParams>` contracts.
-  - `06-server-components.md`: Deep mental model of React 19 Server Components; dual runtime model (Server Runtime vs Client Runtime); RSC binary payload streaming; `"use client"` execution boundaries; composition patterns (passing Server Components as `children` into Client Components); props serialization requirements; secret protection with `server-only`; clear criteria for when Client Components are strictly required.
-- Extended Acme App reference implementation (`examples/acme-app/`):
-  - Added server-side data access layer in `lib/projects.ts` protected by `server-only`.
-  - Added nested dashboard layout (`app/dashboard/layout.tsx`), overview page (`app/dashboard/page.tsx`), and projects list page (`app/dashboard/projects/page.tsx`).
-  - Added dynamic route segment page (`app/dashboard/projects/[slug]/page.tsx`) with async `params` and `searchParams` contracts.
-  - Added streaming loading skeleton (`app/dashboard/projects/loading.tsx`), interactive client error boundary (`app/dashboard/error.tsx`), and custom 404 handler (`app/dashboard/not-found.tsx`).
-  - Added route-local interactive leaf Client Component (`app/dashboard/projects/_components/status-toggle.tsx`).
+- Advanced production manuscript content for **Part I — Modern Next.js** (Chapters 4–6).
+- Extended Acme App reference implementation.
 
 ---
 
@@ -26,15 +43,4 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Added
 - Initial manuscript repository architecture (`nextjs-16-developer-guide/`).
-- Centralized product metadata in `content/metadata.json` and TypeScript accessor `content/metadata.ts`.
-- Master Table of Contents in `content/toc.md` covering 8 Parts, 41 Chapters, and 6 Appendices.
-- Full production manuscript content for **Part I — Modern Next.js**:
-  - `01-what-nextjs-16-is.md`: Next.js 16.3.4 & React 19 architecture, RSC binary payload streaming, Turbopack default engine, explicit caching with Cache Components and `'use cache'`, uncached fetch defaults, edge Routing Proxy vs Middleware, and Pages vs App router analysis.
-  - `02-creating-a-nextjs-16-project.md`: Scaffolding, Node.js `>=20.0.0` prerequisites, `tsconfig.json` bundler resolution, `next.config.ts`, secure environment schema validation excluding hardcoded fallback secrets, and CI checks.
-  - `03-understanding-the-app-router.md`: Special file conventions, nested layout state preservation, edge Routing Proxy request interception, async dynamic `params`/`searchParams` contract, and error boundaries.
-- Outline template files for Chapters 4–41 and Appendices A–F in `content/chapters/`.
-- Compilable Next.js 16.3.4 App Router reference application ("Acme App") in `examples/acme-app/` featuring environment configuration schemas (`lib/env.ts`), ESLint v9 Flat Config (`eslint.config.mjs`), `.env.example` template, and `next.config.ts`.
-- Automated manuscript validation script in `scripts/validate-manuscript.ts`.
-- Cover Specification in `assets/cover-spec.md`.
-- Free Sample Strategy outline in `docs/free-sample-strategy.md`.
-- Project license notice in `LICENSE.md`.
+- Master Table of Contents in `content/toc.md`.

@@ -1,10 +1,10 @@
 # Practical Next.js 16 Developer Guide
 
 > **Working Title**: Practical Next.js 16 Developer Guide
-> **Version**: 0.1.0 (Manuscript Development Stage)
+> **Version**: 1.0.0 (Official Commercial Publication Release)
 > **Target Framework**: Next.js 16.x (Target 16.3.4) & React 19
 
-This repository contains the manuscript, reference code examples, assets, and build tools for the commercial technical ebook **"Practical Next.js 16 Developer Guide"**.
+This repository contains the manuscript, reference code examples, assets, and publication tools for the commercial technical ebook **"Practical Next.js 16 Developer Guide"**.
 
 ---
 
@@ -32,36 +32,40 @@ The manuscript is structured into 8 main Parts, 41 Chapters, and 6 Appendices:
 ## Fictional Reference Application ("Acme App")
 Code examples throughout the ebook are rooted in the fictional reference application located at `examples/acme-app/`. It demonstrates:
 - App Router layout and page conventions
-- Type-safe server data operations
-- Minimal client-side hydration overhead
+- React 19 Server Components & Server Actions with Zod validation
+- Data Access Layer (DAL) protected by `import "server-only"`
+- Health check Route Handlers (`app/api/health/route.ts`)
+- Automated unit test suite (`tests/projects.test.ts`)
 
 ---
 
 ## Manuscript Validation & Commands
 
 ### Running Manuscript Validation
-To check links, headers, metadata, and chapter section completeness:
+To check headers, metadata, word count thresholds, and chapter completeness:
 ```bash
-npx ts-node scripts/validate-manuscript.ts
+npm run validate
 ```
 
-### Typechecking Examples
-To verify TypeScript compilation across the manuscript tooling and reference application:
+### Compiling Publication & Free Sample Packages
+To build consolidated Markdown, printable HTML, EPUB manifests, and the Free Sample Edition:
 ```bash
-# Typecheck root manuscript tools
-npx tsc --noEmit -p tsconfig.json
+# Compile full commercial publication package
+npm run build:publication
 
-# Typecheck Acme reference app
-npx tsc --noEmit -p examples/acme-app/tsconfig.json
+# Compile free sample preview package
+npm run build:sample
 ```
 
----
+### Typechecking & Testing Examples
+To verify TypeScript compilation and run test suites:
+```bash
+# Typecheck guide workspace tools
+npm run typecheck
 
-## Planned Output Formats
-- Interactive Web Documentation
-- PDF Edition
-- EPUB / E-Reader Formats
-- Free Sample Preview Package
+# Run Acme App tests and production build
+cd examples/acme-app && npm run test && npm run build
+```
 
 ---
 
@@ -73,4 +77,4 @@ npx tsc --noEmit -p examples/acme-app/tsconfig.json
 ---
 
 ## Licensing
-See [LICENSE.md](LICENSE.md) for terms and copyright notices. DRAFT — FINAL LICENSE TO BE REVIEWED BEFORE SALE.
+See [LICENSE.md](LICENSE.md) for terms and copyright notices. Copyright © 2026 Sayyed Abrar Akhtar. All rights reserved.
