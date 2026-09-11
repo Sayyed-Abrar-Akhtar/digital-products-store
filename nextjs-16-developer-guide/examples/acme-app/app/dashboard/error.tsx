@@ -10,27 +10,25 @@ export default function DashboardError({
   reset: () => void;
 }) {
   useEffect(() => {
-    console.error("Caught error in Dashboard boundary:", error);
+    console.error("Acme Dashboard Error:", error.message, "Digest:", error.digest);
   }, [error]);
 
   return (
-    <div style={{ padding: "1.5rem", border: "1px solid #fca5a5", background: "#fef2f2", borderRadius: "8px" }}>
-      <h2 style={{ color: "#991b1b", margin: "0 0 0.5rem 0", fontSize: "1.2rem" }}>Dashboard Error Boundary</h2>
-      <p style={{ color: "#7f1d1d", fontSize: "0.9rem", margin: "0 0 1rem 0" }}>
-        {error.message || "An unexpected error occurred while rendering this dashboard view."}
+    <div className="p-8 max-w-lg mx-auto my-12 border border-red-800 bg-red-950/40 rounded-xl text-center space-y-4 text-white">
+      <h2 className="text-2xl font-bold text-red-400">Dashboard Exception</h2>
+      <p className="text-sm text-slate-300">
+        An unhandled runtime error occurred loading telemetry data.
       </p>
+
+      {error.digest && (
+        <p className="text-xs font-mono bg-slate-900 p-2 rounded text-slate-400">
+          Ref Digest: {error.digest}
+        </p>
+      )}
+
       <button
         onClick={() => reset()}
-        type="button"
-        style={{
-          padding: "6px 16px",
-          background: "#dc2626",
-          color: "#fff",
-          border: "none",
-          borderRadius: "4px",
-          cursor: "pointer",
-          fontWeight: 600
-        }}
+        className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-md"
       >
         Retry
       </button>

@@ -1,11 +1,13 @@
 {
   "name": "nextjs-16-developer-guide",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
   "description": "Practical Next.js 16 Developer Guide — Official Manuscript and Code Examples",
   "scripts": {
     "validate": "tsx scripts/validate-manuscript.ts",
     "typecheck": "tsc --noEmit",
+    "build:publication": "tsx scripts/build-publication.ts",
+    "build:sample": "tsx scripts/build-sample.ts",
     "test:examples": "cd examples/acme-app && npm run typecheck"
   },
   "devDependencies": {

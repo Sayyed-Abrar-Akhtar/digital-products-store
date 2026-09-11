@@ -46,21 +46,56 @@ function validateManuscript(): ValidationResult {
       result.warnings.push(`Expected at least 40 chapters, found ${chapterFiles.length}`);
     }
 
-    // Verify each chapter file contains required headers
+    // Verify each chapter file contains required headers and quality standards
     for (const file of chapterFiles) {
       const content = fs.readFileSync(path.join(chaptersDir, file), "utf-8");
-      const requiredSections = [
-        "## Learning Objectives",
-        "## Practical Example",
-        "## Common Mistakes",
-        "## Production Considerations",
-        "## Summary"
-      ];
+      const isAppendix = file.startsWith("appendix-");
+
+      const requiredSections = isAppendix
+        ? [
+            "## Learning Objectives",
+            "## Overview & Core Explanation",
+            "## Common Mistakes",
+            "## Production Considerations",
+            "## Summary"
+          ]
+        : [
+            "## Learning Objectives",
+            "## Practical Example",
+            "## Common Mistakes",
+            "## Production Considerations",
+            "## Summary"
+          ];
+
       for (const section of requiredSections) {
         if (!content.includes(section)) {
-          result.errors.push(`Chapter ${file} is missing section: ${section}`);
+          result.errors.push(`File ${file} is missing section: ${section}`);
           result.valid = false;
         }
+      }
+
+      // Check placeholder markers
+      const forbiddenPlaceholders = [
+        "This chapter is under development",
+        "TODO:",
+        "FIXME:",
+        "[PLACEHOLDER]",
+        "Lorem ipsum",
+        "will be added in a future update"
+      ];
+      for (const phrase of forbiddenPlaceholders) {
+        if (content.toLowerCase().includes(phrase.toLowerCase())) {
+          result.errors.push(`File ${file} contains placeholder phrase: "${phrase}"`);
+          result.valid = false;
+        }
+      }
+
+      // Check minimum word count
+      const words = content.split(/\s+/).filter(Boolean).length;
+      const minWords = isAppendix ? 400 : 900;
+      if (words < minWords) {
+        result.errors.push(`File ${file} has insufficient word count (${words} words < required ${minWords})`);
+        result.valid = false;
       }
     }
   }
