@@ -37,6 +37,12 @@ export const CATEGORIES: Category[] = [
     name: "Guides & Resources",
     description: "Technical checklists, architecture playbooks, and production readiness guides.",
   },
+  {
+    id: "cat-7",
+    slug: "ebooks",
+    name: "Ebooks",
+    description: "Actionable ebooks, research-backed study systems, and educational productivity guides.",
+  },
 ];
 
 export const PRODUCTS: Product[] = [
@@ -444,6 +450,44 @@ export const PRODUCTS: Product[] = [
     isFree: false,
     createdAt: "2024-01-01T00:00:00.000Z",
     updatedAt: "2025-01-01T00:00:00.000Z",
+  },
+
+  // Real Commercial Digital Ebook Product
+  {
+    id: "prod-13",
+    slug: "the-student-study-system",
+    name: "The Student Study System",
+    shortDescription: "Study Less Randomly. Remember More. Prepare With a System.",
+    description:
+      "A practical study system for students who spend hours studying but still feel unprepared. Built on five evidence-backed loops (PLAN → LEARN → RETRIEVE → SPACE → MEASURE), this ebook provides step-by-step frameworks, retrieval practice routines, error logs, task checklists, 7-Day Reset, 30-Day Exam Preparation System, and AI study prompts. Please note: This guide is an educational productivity resource, not a guarantee of grades or exam results.",
+    category: "Ebooks",
+    categorySlug: "ebooks",
+    categoryName: "Ebooks",
+    tags: ["Ebook", "PDF", "Productivity", "Study System", "Learning"],
+    price: 19,
+    compareAtPrice: 29,
+    currency: "USD",
+    images: ["/images/products/the-student-study-system.png"],
+    features: [
+      "5-Loop Framework: PLAN → LEARN → RETRIEVE → SPACE → MEASURE",
+      "5-Minute Retrieval Loop & 50-Minute Session Structure",
+      "7-Day Reset & 30-Day Exam Preparation System",
+      "Practice Question Strategy & Diagnostic Error Log",
+      "Daily Task Checklists & Progress Measurement Matrix",
+      "5 Custom AI Study Prompts (Concept Tutor, Quiz, Error Diagnosis, Exam Simulator, Planner)",
+    ],
+    requirements: [
+      "PDF Reader (Adobe Acrobat, Apple Books, Chrome, Preview, or any PDF viewer)",
+    ],
+    version: "1.0.0",
+    status: "published",
+    featured: true,
+    isFree: false,
+    createdAt: "2025-02-20T00:00:00.000Z",
+    updatedAt: "2025-02-20T00:00:00.000Z",
+    seoTitle: "The Student Study System — Practical Ebook for Effective Learning",
+    seoDescription: "Study Less Randomly. Remember More. Prepare With a System. Actionable ebook with retrieval practice, spaced schedules, exam systems, and AI prompts.",
+    badge: "New Release",
   },
 ];
 

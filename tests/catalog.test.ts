@@ -51,16 +51,34 @@ describe("Catalog Data Access Layer Tests", () => {
     assert.equal(missing, null);
   });
 
-  test("getPublishedCategories returns 6 valid categories", async () => {
+  test("getPublishedCategories returns 7 valid categories including Ebooks", async () => {
     const categories = await getPublishedCategories();
     assert.ok(Array.isArray(categories));
-    assert.equal(categories.length, 6);
+    assert.equal(categories.length, 7);
+
+    const ebookCategory = categories.find((c) => c.slug === "ebooks");
+    assert.ok(ebookCategory);
+    assert.equal(ebookCategory.name, "Ebooks");
 
     for (const c of categories) {
       assert.ok(c.id);
       assert.ok(c.name);
       assert.ok(c.slug);
     }
+  });
+
+  test("The Student Study System ebook product is published and accessible", async () => {
+    const ebook = await getProductBySlug("the-student-study-system");
+    assert.ok(ebook);
+    assert.equal(ebook.name, "The Student Study System");
+    assert.equal(ebook.categorySlug, "ebooks");
+    assert.equal(ebook.categoryName, "Ebooks");
+    assert.equal(ebook.price, 19);
+    assert.equal(ebook.currency, "USD");
+    assert.equal(ebook.status, "published");
+    assert.ok(ebook.images.includes("/images/products/the-student-study-system.png"));
+    assert.ok(ebook.description.includes("PLAN → LEARN → RETRIEVE → SPACE → MEASURE"));
+    assert.ok(ebook.description.includes("educational productivity resource, not a guarantee of grades"));
   });
 
   test("getCategoryBySlug and getProductsByCategory function correctly", async () => {
