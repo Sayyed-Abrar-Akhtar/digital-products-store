@@ -80,6 +80,13 @@ async function seedDatabase() {
       seoTitle: "Technical Guides, SEO Checklists & Architecture Playbooks",
       seoDescription: "Deep-dive technical guides, Next.js 16 SEO checklists, and production security launch playbooks.",
     },
+    {
+      name: "Ebooks",
+      slug: "ebooks",
+      description: "Actionable ebooks, research-backed study systems, and educational productivity guides.",
+      seoTitle: "Educational Ebooks & Study Productivity Systems",
+      seoDescription: "Practical digital ebooks and learning frameworks designed for structured study, retention, and exam preparation.",
+    },
   ];
 
   const categoryMap: Record<string, mongoose.Types.ObjectId> = {};
@@ -114,6 +121,10 @@ async function seedDatabase() {
     { name: "Architecture", slug: "architecture", description: "Software architecture tag" },
     { name: "Starter", slug: "starter", description: "Starter project tag" },
     { name: "Checklist", slug: "checklist", description: "Verification checklist tag" },
+    { name: "Ebook", slug: "ebook", description: "Digital ebook tag" },
+    { name: "PDF", slug: "pdf", description: "PDF digital format tag" },
+    { name: "Study System", slug: "study-system", description: "Study system tag" },
+    { name: "Learning", slug: "learning", description: "Learning strategies tag" },
   ];
 
   const tagMap: Record<string, mongoose.Types.ObjectId> = {};
@@ -456,6 +467,38 @@ async function seedDatabase() {
       ],
       seoTitle: "Legacy Product — Archived",
       seoDescription: "Archived legacy product.",
+    },
+
+    // Real Commercial Digital Ebook Product
+    {
+      name: "The Student Study System",
+      slug: "the-student-study-system",
+      shortDescription: "Study Less Randomly. Remember More. Prepare With a System.",
+      description:
+        "A practical study system for students who spend hours studying but still feel unprepared. Built on five evidence-backed loops (PLAN → LEARN → RETRIEVE → SPACE → MEASURE), this ebook provides step-by-step frameworks, retrieval practice routines, error logs, task checklists, 7-Day Reset, 30-Day Exam Preparation System, and AI study prompts. Please note: This guide is an educational productivity resource, not a guarantee of grades or exam results.",
+      status: "published",
+      productType: "ebook",
+      isFree: false,
+      price: 19,
+      compareAtPrice: 29,
+      currency: "USD",
+      featured: true,
+      requirements: ["PDF Reader (Adobe Acrobat, Apple Books, Chrome, Preview, or any PDF viewer)"],
+      version: "1.0.0",
+      categorySlug: "ebooks",
+      tagSlugs: ["ebook", "pdf", "productivity", "study-system", "learning"],
+      images: [{ url: "/images/products/the-student-study-system.png", altText: "The Student Study System Ebook Cover", sortOrder: 0, isPrimary: true }],
+      features: [
+        { title: "5-Loop Framework: PLAN → LEARN → RETRIEVE → SPACE → MEASURE", sortOrder: 0 },
+        { title: "5-Minute Retrieval Loop & 50-Minute Session Structure", sortOrder: 1 },
+        { title: "7-Day Reset & 30-Day Exam Preparation System", sortOrder: 2 },
+        { title: "Practice Question Strategy & Diagnostic Error Log", sortOrder: 3 },
+        { title: "Daily Task Checklists & Progress Measurement Matrix", sortOrder: 4 },
+        { title: "5 Custom AI Study Prompts (Concept Tutor, Quiz, Error Diagnosis, Exam Simulator, Planner)", sortOrder: 5 },
+      ],
+      seoTitle: "The Student Study System — Practical Ebook for Effective Learning",
+      seoDescription: "Study Less Randomly. Remember More. Prepare With a System. Actionable ebook with retrieval practice, spaced schedules, exam systems, and AI prompts.",
+      badge: "New Release",
     },
   ];
 
